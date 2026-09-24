@@ -27,9 +27,9 @@ public class TelaLogin extends JFrame {
 	private JPanel contentPane;
 	private JTextField textFieldLogin;
 	private JPasswordField passwordFieldSenha;
-	private JButton btnNewButton;
+	private JButton btnEntrar;
 	private JLabel lblEsqueciSenha;
-	private JLabel lblNewLabel;
+	private JLabel lblCredenciais;
 
 
 	public TelaLogin() {
@@ -87,43 +87,43 @@ public class TelaLogin extends JFrame {
 		gbc_passwordFieldSenha.gridy = 2;
 		contentPane.add(passwordFieldSenha, gbc_passwordFieldSenha);
 
-		btnNewButton = new JButton("Entrar");
-		btnNewButton.addMouseListener(new MouseAdapter() {
+		btnEntrar = new JButton("Entrar");
+		btnEntrar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				System.out.println("Teste");
 			}
 		});
-		btnNewButton.addActionListener(new ActionListener() {
+		btnEntrar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String login = textFieldLogin.getText();
 				String senha = new String(passwordFieldSenha.getPassword());
 
-				LoginController.realizarLogin(login, senha);
+				LoginController.realizarLogin(login, senha, TelaLogin.this);
 			}
 		});
-
-		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
-		gbc_btnNewButton.gridwidth = 2;
-		gbc_btnNewButton.insets = new Insets(20, 5, 5, 0);
-		gbc_btnNewButton.gridx = 0;
-		gbc_btnNewButton.gridy = 3;
-		contentPane.add(btnNewButton, gbc_btnNewButton);
+		getRootPane().setDefaultButton(btnEntrar);
+		GridBagConstraints gbc_btnEntrar = new GridBagConstraints();
+		gbc_btnEntrar.gridwidth = 2;
+		gbc_btnEntrar.insets = new Insets(20, 5, 5, 0);
+		gbc_btnEntrar.gridx = 0;
+		gbc_btnEntrar.gridy = 3;
+		contentPane.add(btnEntrar, gbc_btnEntrar);
 		
-		lblNewLabel = new JLabel("Credenciais do banco");
-		lblNewLabel.addMouseListener(new MouseAdapter() {
+		lblCredenciais = new JLabel("Credenciais do banco");
+		lblCredenciais.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				LoginController.IniciarTelaBanco();
 			}
 		});
-		lblNewLabel.setForeground(SystemColor.textHighlight);
-		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
-		gbc_lblNewLabel.gridwidth = 2;
-		gbc_lblNewLabel.insets = new Insets(5, 5, 0, 0);
-		gbc_lblNewLabel.gridx = 0;
-		gbc_lblNewLabel.gridy = 4;
-		contentPane.add(lblNewLabel, gbc_lblNewLabel);
+		lblCredenciais.setForeground(SystemColor.textHighlight);
+		GridBagConstraints gbc_lblCredenciais = new GridBagConstraints();
+		gbc_lblCredenciais.gridwidth = 2;
+		gbc_lblCredenciais.insets = new Insets(5, 5, 0, 0);
+		gbc_lblCredenciais.gridx = 0;
+		gbc_lblCredenciais.gridy = 4;
+		contentPane.add(lblCredenciais, gbc_lblCredenciais);
 
 		lblEsqueciSenha = new JLabel("Esqueci a senha");
 		lblEsqueciSenha.setForeground(SystemColor.textHighlight);

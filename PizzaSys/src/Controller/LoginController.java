@@ -1,5 +1,6 @@
 package Controller;
 
+import java.awt.Window;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,14 +9,16 @@ import javax.swing.JOptionPane;
 import Model.Funcionario;
 import View.TelaBanco;
 import View.TelaLogin;
+import View.TelaPrincipal;
 
 public class LoginController {
+	
 
 	private static List<Funcionario> funcionarios = new ArrayList<>();
 
 	public static void iniciarSistema() {
 
-		Funcionario admin = new Funcionario(1, "Administrador", "admin", "admin", 3);
+		Funcionario admin = new Funcionario(1, "Administrador", "admin", "admin", 3, 2500);
 
 		funcionarios.add(admin);
 
@@ -23,7 +26,7 @@ public class LoginController {
 		telaLogin.setVisible(true);
 	}
 
-	public static void realizarLogin(String login, String senha) {
+	public static void realizarLogin(String login, String senha, TelaLogin telaLogin) {
 
 		for (Funcionario funcionario : funcionarios) {
 
@@ -32,6 +35,11 @@ public class LoginController {
 				JOptionPane.showMessageDialog(null, "Bem-vindo, " + funcionario.getNome() + "!");
 
 				System.out.println("Deu certo!");
+				
+				TelaPrincipal telaprincipal = new TelaPrincipal(funcionario);
+				telaprincipal.setVisible(true);
+				
+			telaLogin.dispose();
 
 				return;
 			}
