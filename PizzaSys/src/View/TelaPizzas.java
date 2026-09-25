@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -17,11 +18,13 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import Controller.PizzaController;
 import Model.Pizza;
@@ -42,13 +45,11 @@ public class TelaPizzas extends JPanel {
 		JPanel panelSuperior = new JPanel(new BorderLayout());
 
 		JLabel lblTitulo = new JLabel("Pizzas");
-
 		lblTitulo.setFont(new Font("Tahoma", Font.BOLD, 18));
 
 		panelSuperior.add(lblTitulo, BorderLayout.WEST);
 
 		lblErro = new JLabel(" ");
-
 		lblErro.setForeground(Color.RED);
 
 		panelSuperior.add(lblErro, BorderLayout.CENTER);
@@ -56,13 +57,10 @@ public class TelaPizzas extends JPanel {
 		add(panelSuperior, BorderLayout.NORTH);
 
 		panelFeed = new JPanel();
-
 		panelFeed.setLayout(new BoxLayout(panelFeed, BoxLayout.Y_AXIS));
-
 		panelFeed.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
 		JScrollPane scrollPane = new JScrollPane(panelFeed);
-
 		scrollPane.setBorder(null);
 
 		add(scrollPane, BorderLayout.CENTER);
@@ -70,19 +68,14 @@ public class TelaPizzas extends JPanel {
 		JPanel panelBotoes = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
 		JButton btnAdicionar = new JButton("Adicionar Pizza");
-
 		btnAdicionar.addActionListener(e -> abrirFormularioAdicionar());
-
 		panelBotoes.add(btnAdicionar);
 
 		JButton btnEditar = new JButton("Editar");
-
 		btnEditar.addActionListener(e -> abrirFormularioEditar());
-
 		panelBotoes.add(btnEditar);
 
 		JButton btnExcluir = new JButton("Excluir");
-
 		btnExcluir.addActionListener(e -> PizzaController.excluirPizza(this, pizzaSelecionada, this));
 
 		panelBotoes.add(btnExcluir);
@@ -186,7 +179,6 @@ public class TelaPizzas extends JPanel {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-
 				selecionarPizza(pizza);
 			}
 		});
@@ -196,7 +188,6 @@ public class TelaPizzas extends JPanel {
 			JPanel panel = (JPanel) componente;
 
 			for (java.awt.Component filho : panel.getComponents()) {
-
 				adicionarListenerSelecao(filho, pizza);
 			}
 		}
@@ -229,24 +220,48 @@ public class TelaPizzas extends JPanel {
 	private void abrirFormularioAdicionar() {
 
 		JTextField txtNome = new JTextField();
-
 		JTextField txtPreco = new JTextField();
-
 		JTextField txtDescricao = new JTextField();
 
-		JPanel painel = new JPanel(new java.awt.GridLayout(3, 2, 5, 5));
+		JLabel lblImagem = new JLabel("Nenhuma imagem selecionada");
+		JButton btnImagem = new JButton("Escolher imagem");
+
+		final File[] arquivoSelecionado = new File[1];
+
+		btnImagem.addActionListener(e -> {
+
+			JFileChooser fileChooser = new JFileChooser();
+
+			fileChooser.setDialogTitle("Selecionar imagem");
+
+			fileChooser.setFileFilter(new FileNameExtensionFilter("Imagens", "jpg", "jpeg", "png", "gif", "bmp"));
+
+			int resultado = fileChooser.showOpenDialog(this);
+
+			if (resultado == JFileChooser.APPROVE_OPTION) {
+
+				arquivoSelecionado[0] = fileChooser.getSelectedFile();
+
+				lblImagem.setText(arquivoSelecionado[0].getName());
+			}
+		});
+
+		JPanel painel = new JPanel(new GridLayout(5, 2, 5, 5));
 
 		painel.add(new JLabel("Nome:"));
-
 		painel.add(txtNome);
 
 		painel.add(new JLabel("Preço:"));
-
 		painel.add(txtPreco);
 
 		painel.add(new JLabel("Descrição:"));
-
 		painel.add(txtDescricao);
+
+		painel.add(new JLabel("Imagem:"));
+		painel.add(btnImagem);
+
+		painel.add(new JLabel(""));
+		painel.add(lblImagem);
 
 		int resposta = JOptionPane.showConfirmDialog(this, painel, "Adicionar Pizza", JOptionPane.OK_CANCEL_OPTION,
 				JOptionPane.PLAIN_MESSAGE);
@@ -255,7 +270,8 @@ public class TelaPizzas extends JPanel {
 			return;
 		}
 
-		PizzaController.adicionarPizza(this, txtNome.getText(), txtPreco.getText(), txtDescricao.getText());
+		PizzaController.adicionarPizza(this, txtNome.getText(), txtPreco.getText(), txtDescricao.getText(),
+				arquivoSelecionado[0]);
 	}
 
 	private void abrirFormularioEditar() {
@@ -274,19 +290,46 @@ public class TelaPizzas extends JPanel {
 
 		JTextField txtDescricao = new JTextField(pizzaSelecionada.getDescricao());
 
-		JPanel painel = new JPanel(new java.awt.GridLayout(3, 2, 5, 5));
+		JLabel lblImagem = new JLabel("Manter imagem atual");
+
+		JButton btnImagem = new JButton("Escolher nova imagem");
+
+		final File[] arquivoSelecionado = new File[1];
+
+		btnImagem.addActionListener(e -> {
+
+			JFileChooser fileChooser = new JFileChooser();
+
+			fileChooser.setDialogTitle("Selecionar nova imagem");
+
+			fileChooser.setFileFilter(new FileNameExtensionFilter("Imagens", "jpg", "jpeg", "png", "gif", "bmp"));
+
+			int resultado = fileChooser.showOpenDialog(this);
+
+			if (resultado == JFileChooser.APPROVE_OPTION) {
+
+				arquivoSelecionado[0] = fileChooser.getSelectedFile();
+
+				lblImagem.setText(arquivoSelecionado[0].getName());
+			}
+		});
+
+		JPanel painel = new JPanel(new GridLayout(5, 2, 5, 5));
 
 		painel.add(new JLabel("Nome:"));
-
 		painel.add(txtNome);
 
 		painel.add(new JLabel("Preço:"));
-
 		painel.add(txtPreco);
 
 		painel.add(new JLabel("Descrição:"));
-
 		painel.add(txtDescricao);
+
+		painel.add(new JLabel("Imagem:"));
+		painel.add(btnImagem);
+
+		painel.add(new JLabel(""));
+		painel.add(lblImagem);
 
 		int resposta = JOptionPane.showConfirmDialog(this, painel, "Editar Pizza", JOptionPane.OK_CANCEL_OPTION,
 				JOptionPane.PLAIN_MESSAGE);
@@ -296,7 +339,7 @@ public class TelaPizzas extends JPanel {
 		}
 
 		PizzaController.editarPizza(this, pizzaSelecionada, txtNome.getText(), txtPreco.getText(),
-				txtDescricao.getText());
+				txtDescricao.getText(), arquivoSelecionado[0]);
 	}
 
 	public Pizza getPizzaSelecionada() {
@@ -304,17 +347,14 @@ public class TelaPizzas extends JPanel {
 	}
 
 	public void setPizzaSelecionada(Pizza pizza) {
-
 		this.pizzaSelecionada = pizza;
 	}
 
 	public void mostrarErro(String mensagem) {
-
 		lblErro.setText(mensagem);
 	}
 
 	public void limparErro() {
-
 		lblErro.setText(" ");
 	}
 }

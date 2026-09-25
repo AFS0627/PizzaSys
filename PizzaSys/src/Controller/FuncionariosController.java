@@ -59,12 +59,14 @@ public class FuncionariosController {
 		return null;
 	}
 
-	public static String alterarFuncionario(
-			int id,
-			String nome,
-			String login,
-			String senha,
-			String salarioTexto) {
+
+			public static String alterarFuncionario(
+			        int id,
+			        String nome,
+			        String login,
+			        String senha,
+			        int funcao,
+			        String salarioTexto) {
 
 		Funcionario funcionario = buscarFuncionario(id);
 
@@ -100,6 +102,7 @@ public class FuncionariosController {
 		funcionario.setNome(nome.trim());
 		funcionario.setLogin(login.trim());
 		funcionario.setSenha(senha);
+		funcionario.setFuncao(funcao);
 		funcionario.setSalario(salario);
 
 		return null;
