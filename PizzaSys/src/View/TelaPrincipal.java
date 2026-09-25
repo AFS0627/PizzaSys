@@ -1,21 +1,23 @@
+
 package View;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.GridLayout;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import Controller.GeralController;
 import Model.Funcionario;
-import java.awt.Font;
-import javax.swing.SwingConstants;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import java.awt.Color;
 
 public class TelaPrincipal extends JFrame {
 
@@ -29,20 +31,11 @@ public class TelaPrincipal extends JFrame {
 
 	private JLabel lblUsuario;
 
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					TelaPrincipal frame = new TelaPrincipal(null);
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+	private Funcionario funcionario;
 
 	public TelaPrincipal(Funcionario funcionario) {
+
+		this.funcionario = funcionario;
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 900, 600);
@@ -54,64 +47,128 @@ public class TelaPrincipal extends JFrame {
 		contentPane.setLayout(new BorderLayout(5, 5));
 
 		panelSuperior = new JPanel();
-		contentPane.add(panelSuperior, BorderLayout.NORTH);
 		panelSuperior.setLayout(new BorderLayout());
+		contentPane.add(panelSuperior, BorderLayout.NORTH);
 
 		JLabel lblTitulo = new JLabel("PizzaSys");
+		lblTitulo.setFont(new Font("Tahoma", Font.BOLD, 18));
 		panelSuperior.add(lblTitulo, BorderLayout.WEST);
 
 		lblUsuario = new JLabel();
-		panelSuperior.add(lblUsuario, BorderLayout.EAST);
 
 		if (funcionario != null) {
 			lblUsuario.setText("Usuário: " + funcionario.getNome());
 		}
 
+		panelSuperior.add(lblUsuario, BorderLayout.EAST);
+
 		panelMenu = new JPanel();
-		contentPane.add(panelMenu, BorderLayout.WEST);
 		panelMenu.setLayout(new GridLayout(6, 1, 5, 5));
+		contentPane.add(panelMenu, BorderLayout.WEST);
 
 		JButton btnPedidos = new JButton("Pedidos");
 		panelMenu.add(btnPedidos);
 
 		JButton btnFuncionarios = new JButton("Funcionários");
+
 		btnFuncionarios.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				GeralController.IniciarTelaFuncionarios(TelaPrincipal.this, funcionario);
+
+				if (funcionario != null && funcionario.getFuncao() == 3) {
+					mostrarFuncionarios();
+
+				} else {
+					GeralController.mostrarSemPermissao(TelaPrincipal.this);
+				}
 			}
 		});
+
 		panelMenu.add(btnFuncionarios);
 
 		JButton btnPizzas = new JButton("Pizzas");
+		btnPizzas.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				mostrarPizzas();
+			}
+		});
 		panelMenu.add(btnPizzas);
 
 		JButton btnRelatorios = new JButton("Relatórios");
 		panelMenu.add(btnRelatorios);
 
+		JButton btnNotificacoes = new JButton("Notificações (" + GeralController.QntdNotificacao(funcionario) + ")");
+
+		panelMenu.add(btnNotificacoes);
+
 		JButton btnSair = new JButton("Sair");
+
 		btnSair.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				GeralController.sair();
 			}
 		});
 
-		JButton btnNotificacoes = new JButton("Notificações(" + GeralController.QntdNotificacao(funcionario) + ")");
-		panelMenu.add(btnNotificacoes);
 		panelMenu.add(btnSair);
 
 		panelConteudo = new JPanel();
+		panelConteudo.setLayout(new BorderLayout(5, 5));
 		contentPane.add(panelConteudo, BorderLayout.CENTER);
-		panelConteudo.setLayout(new BorderLayout());
 
-		JLabel lblInicio = new JLabel("Olá " + funcionario.getNome());
-		lblInicio.setHorizontalAlignment(SwingConstants.CENTER);
-		lblInicio.setFont(new Font("Tahoma", Font.PLAIN, 28));
-		panelConteudo.add(lblInicio, BorderLayout.CENTER);
+		mostrarInicio();
 
 		panelInferior = new JPanel();
 		contentPane.add(panelInferior, BorderLayout.SOUTH);
 
 		JLabel lblStatus = new JLabel("PizzaSys - Sistema de gerenciamento");
 		panelInferior.add(lblStatus);
+	}
+
+	public void mostrarInicio() {
+
+		panelConteudo.removeAll();
+
+		JLabel lblInicio;
+
+		if (funcionario != null) {
+			lblInicio = new JLabel("Olá " + funcionario.getNome());
+		} else {
+			lblInicio = new JLabel("Olá");
+		}
+
+		lblInicio.setHorizontalAlignment(SwingConstants.CENTER);
+		lblInicio.setFont(new Font("Tahoma", Font.PLAIN, 28));
+
+		panelConteudo.add(lblInicio, BorderLayout.CENTER);
+
+		panelConteudo.revalidate();
+		panelConteudo.repaint();
+	}
+
+	public void mostrarFuncionarios() {
+
+		panelConteudo.removeAll();
+
+		TelaFuncionarios telaFuncionarios = new TelaFuncionarios(funcionario);
+
+		panelConteudo.add(telaFuncionarios, BorderLayout.CENTER);
+
+		panelConteudo.revalidate();
+		panelConteudo.repaint();
+	}
+
+	public Funcionario getFuncionario() {
+		return funcionario;
+	}
+
+	public void mostrarPizzas() {
+
+		panelConteudo.removeAll();
+
+		TelaPizzas telaPizzas = new TelaPizzas();
+
+		panelConteudo.add(telaPizzas, BorderLayout.CENTER);
+
+		panelConteudo.revalidate();
+		panelConteudo.repaint();
 	}
 }

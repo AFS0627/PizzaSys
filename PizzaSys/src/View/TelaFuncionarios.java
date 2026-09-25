@@ -1,137 +1,39 @@
 package View;
 
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
-import java.awt.GridLayout;
+import java.awt.Font;
 
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.border.EmptyBorder;
+import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
-import Controller.GeralController;
+import Controller.FuncionariosController;
 import Model.Funcionario;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-
-public class TelaFuncionarios extends JFrame {
+public class TelaFuncionarios extends JPanel {
 
 	private static final long serialVersionUID = 1L;
-
-	private JPanel contentPane;
-	private JPanel panelMenu;
-	private JPanel panelConteudo;
-	private JPanel panelSuperior;
-	private JPanel panelInferior;
-
-	private JLabel lblUsuario;
 
 	private JTable tabelaFuncionarios;
 	private DefaultTableModel modeloTabela;
 
-	public static void main(String[] args) {
-
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					TelaFuncionarios frame = new TelaFuncionarios(null);
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+	private Funcionario funcionario;
 
 	public TelaFuncionarios(Funcionario funcionario) {
 
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 900, 600);
-		setTitle("PizzaSys");
+		this.funcionario = funcionario;
 
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		contentPane.setLayout(new BorderLayout(5, 5));
-
-		// =========================
-		// PAINEL SUPERIOR
-		// =========================
-
-		panelSuperior = new JPanel();
-		contentPane.add(panelSuperior, BorderLayout.NORTH);
-		panelSuperior.setLayout(new BorderLayout());
-
-		JLabel lblTitulo = new JLabel("PizzaSys");
-		lblTitulo.setFont(new Font("Tahoma", Font.BOLD, 18));
-		panelSuperior.add(lblTitulo, BorderLayout.WEST);
-
-		lblUsuario = new JLabel();
-
-		if (funcionario != null) {
-			lblUsuario.setText("Usuário: " + funcionario.getNome());
-		}
-
-		panelSuperior.add(lblUsuario, BorderLayout.EAST);
-
-		// =========================
-		// MENU
-		// =========================
-
-		panelMenu = new JPanel();
-		contentPane.add(panelMenu, BorderLayout.WEST);
-		panelMenu.setLayout(new GridLayout(6, 1, 5, 5));
-
-		JButton btnPedidos = new JButton("Pedidos");
-		panelMenu.add(btnPedidos);
-
-		JButton btnFuncionarios = new JButton("Funcionários");
-		btnFuncionarios.setBackground(Color.RED);
-		panelMenu.add(btnFuncionarios);
-
-		JButton btnPizzas = new JButton("Pizzas");
-		panelMenu.add(btnPizzas);
-
-		JButton btnRelatorios = new JButton("Relatórios");
-		panelMenu.add(btnRelatorios);
-
-		JButton btnNotificacoes = new JButton("Notificações (" + GeralController.QntdNotificacao(funcionario) + ")");
-
-		panelMenu.add(btnNotificacoes);
-
-		JButton btnSair = new JButton("Sair");
-
-		btnSair.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				GeralController.sair();
-			}
-		});
-
-		panelMenu.add(btnSair);
-
-		// =========================
-		// CONTEÚDO
-		// =========================
-
-		panelConteudo = new JPanel();
-		contentPane.add(panelConteudo, BorderLayout.CENTER);
-		panelConteudo.setLayout(new BorderLayout(5, 5));
+		setLayout(new BorderLayout(5, 5));
 
 		JLabel lblFuncionarios = new JLabel("Funcionários");
 		lblFuncionarios.setFont(new Font("Tahoma", Font.BOLD, 18));
 
-		panelConteudo.add(lblFuncionarios, BorderLayout.NORTH);
-
-		// =========================
-		// TABELA
-		// =========================
+		add(lblFuncionarios, BorderLayout.NORTH);
 
 		modeloTabela = new DefaultTableModel(new Object[][] {},
 				new String[] { "ID", "Nome", "Login", "Função", "Salário" }) {
@@ -146,68 +48,164 @@ public class TelaFuncionarios extends JFrame {
 
 		tabelaFuncionarios = new JTable(modeloTabela);
 
-		tabelaFuncionarios.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+		tabelaFuncionarios.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 		JScrollPane scrollPane = new JScrollPane(tabelaFuncionarios);
 
-		panelConteudo.add(scrollPane, BorderLayout.CENTER);
-
-		// =========================
-		// BOTÕES
-		// =========================
+		add(scrollPane, BorderLayout.CENTER);
 
 		JPanel panelBotoes = new JPanel();
 
 		JButton btnIncluir = new JButton("Incluir");
 
-		btnIncluir.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				GeralController.IniciarTelaIncluirFuncionario(modeloTabela);
-			}
-		});
+		btnIncluir.addActionListener(e -> incluirFuncionario());
 
 		panelBotoes.add(btnIncluir);
 
 		JButton btnAlterar = new JButton("Alterar");
 
-		btnAlterar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				int linha = tabelaFuncionarios.getSelectedRow();
-
-				GeralController.alterarFuncionario(TelaFuncionarios.this, modeloTabela, linha);
-			}
-		});
+		btnAlterar.addActionListener(e -> alterarFuncionario());
 
 		panelBotoes.add(btnAlterar);
 
 		JButton btnExcluir = new JButton("Excluir");
 
-		btnExcluir.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				int linha = tabelaFuncionarios.getSelectedRow();
-
-				GeralController.excluirFuncionario(TelaFuncionarios.this, modeloTabela, linha);
-			}
-		});
+		btnExcluir.addActionListener(e -> excluirFuncionario());
 
 		panelBotoes.add(btnExcluir);
 
-		panelConteudo.add(panelBotoes, BorderLayout.SOUTH);
+		add(panelBotoes, BorderLayout.SOUTH);
 
-		// Carrega os funcionários na abertura
-		GeralController.carregarFuncionarios(modeloTabela);
+		atualizarTabela();
+	}
 
-		// =========================
-		// RODAPÉ
-		// =========================
+	private void incluirFuncionario() {
 
-		panelInferior = new JPanel();
-		contentPane.add(panelInferior, BorderLayout.SOUTH);
+		TelaIncluirFuncionario tela = new TelaIncluirFuncionario(this);
 
-		JLabel lblStatus = new JLabel("PizzaSys - Sistema de gerenciamento");
+		tela.setVisible(true);
+	}
 
-		panelInferior.add(lblStatus);
+	public void atualizarTabela() {
+
+		modeloTabela.setRowCount(0);
+
+		for (Funcionario funcionario : FuncionariosController.getFuncionarios()) {
+
+			modeloTabela.addRow(new Object[] { funcionario.getId(), funcionario.getNome(), funcionario.getLogin(),
+					FuncionariosController.nomeFuncao(funcionario.getFuncao()),
+					String.format("R$ %.2f", funcionario.getSalario()) });
+		}
+	}
+
+	private void alterarFuncionario() {
+
+		int linha = tabelaFuncionarios.getSelectedRow();
+
+		if (linha == -1) {
+
+			JOptionPane.showMessageDialog(this, "Selecione um funcionário para alterar.", "Aviso",
+					JOptionPane.WARNING_MESSAGE);
+
+			return;
+		}
+
+		int id = (int) modeloTabela.getValueAt(linha, 0);
+
+		Funcionario funcionario = FuncionariosController.buscarFuncionario(id);
+
+		if (funcionario == null) {
+
+			JOptionPane.showMessageDialog(this, "Funcionário não encontrado.", "Erro", JOptionPane.ERROR_MESSAGE);
+
+			return;
+		}
+
+		String nome = JOptionPane.showInputDialog(this, "Nome:", funcionario.getNome());
+
+		if (nome == null) {
+			return;
+		}
+
+		String login = JOptionPane.showInputDialog(this, "Login:", funcionario.getLogin());
+
+		if (login == null) {
+			return;
+		}
+
+		String senha = JOptionPane.showInputDialog(this, "Senha:", funcionario.getSenha());
+
+		if (senha == null) {
+			return;
+		}
+
+		String salario = JOptionPane.showInputDialog(this, "Salário:", funcionario.getSalario());
+
+		if (salario == null) {
+			return;
+		}
+
+		String erro = FuncionariosController.alterarFuncionario(id, nome, login, senha, salario);
+
+		if (erro != null) {
+
+			JOptionPane.showMessageDialog(this, erro, "Erro", JOptionPane.ERROR_MESSAGE);
+
+			return;
+		}
+
+		atualizarTabela();
+
+		JOptionPane.showMessageDialog(this, "Funcionário alterado com sucesso!");
+	}
+
+	private void excluirFuncionario() {
+
+		int linha = tabelaFuncionarios.getSelectedRow();
+
+		if (linha == -1) {
+
+			JOptionPane.showMessageDialog(this, "Selecione um funcionário para excluir.", "Aviso",
+					JOptionPane.WARNING_MESSAGE);
+
+			return;
+		}
+
+		int id = (int) modeloTabela.getValueAt(linha, 0);
+
+		Funcionario funcionario = FuncionariosController.buscarFuncionario(id);
+
+		if (funcionario == null) {
+
+			JOptionPane.showMessageDialog(this, "Funcionário não encontrado.", "Erro", JOptionPane.ERROR_MESSAGE);
+
+			return;
+		}
+
+		int resposta = JOptionPane.showConfirmDialog(this,
+				"Tem certeza que deseja excluir o funcionário " + funcionario.getNome() + "?", "Excluir funcionário",
+				JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+
+		if (resposta != JOptionPane.YES_OPTION) {
+			return;
+		}
+
+		boolean excluido = FuncionariosController.excluirFuncionario(id);
+
+		if (!excluido) {
+
+			JOptionPane.showMessageDialog(this, "Não foi possível excluir o funcionário.", "Erro",
+					JOptionPane.ERROR_MESSAGE);
+
+			return;
+		}
+
+		atualizarTabela();
+
+		JOptionPane.showMessageDialog(this, "Funcionário excluído com sucesso!");
+	}
+
+	public Funcionario getFuncionario() {
+		return funcionario;
 	}
 }

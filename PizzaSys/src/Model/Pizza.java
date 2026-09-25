@@ -1,53 +1,54 @@
 package Model;
 
 public class Pizza {
-	private int id;
-	private String nome;
-	private String tamanho;
-	private double preco;
-	private String ingredientes;
 
-	public Pizza(int id, String nome, String tamanho, double preco, String ingredientes) {
-		this.id = id;
-		this.nome = nome;
-		this.tamanho = tamanho;
-		this.preco = preco;
-		this.ingredientes = ingredientes;
-	}
+    private int id;
+    private String nome;
+    private double preco;
+    private String descricao;
+    private String imagem;
 
-	public int getId() {
-		return id;
-	}
+    public Pizza(int id, String nome, double preco, String descricao, String imagem) {
+        this.id = id;
+        this.nome = nome;
+        this.preco = preco;
+        this.descricao = descricao;
+        this.imagem = imagem;
+    }
 
-	public String getNome() {
-		return nome;
-	}
+    public int getId() {
+        return id;
+    }
 
-	public String getTamanho() {
-		return tamanho;
-	}
+    public String getNome() {
+        return nome;
+    }
 
-	public double getPreco() {
-		return preco;
-	}
+    public double getPreco() {
+        return preco;
+    }
 
-	public String getIngredientes() {
-		return ingredientes;
-	}
+    public String getDescricao() {
+        return descricao;
+    }
 
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
+    public String getImagem() {
+        return imagem;
+    }
 
-	public void setTamanho(String tamanho) {
-		this.tamanho = tamanho;
-	}
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
 
-	public void setPreco(double preco) {
-		this.preco = preco;
-	}
+    public void setPreco(double preco) {
+        this.preco = preco;
+    }
 
-	public void setIngredientes(String ingredientes) {
-		this.ingredientes = ingredientes;
-	}
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
+
+    public void setImagem(String imagem) {
+        this.imagem = imagem;
+    }
 }

@@ -15,6 +15,7 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
+import Controller.FuncionariosController;
 import Controller.GeralController;
 
 import java.awt.Font;
@@ -37,28 +38,11 @@ public class TelaIncluirFuncionario extends JFrame {
 
 	private JLabel lblErro;
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					TelaIncluirFuncionario frame = new TelaIncluirFuncionario(null);
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+	private TelaFuncionarios telaFuncionarios;
 
-	/**
-	 * Create the frame.
-	 */
-	public TelaIncluirFuncionario(DefaultTableModel modeloTabela) {
+	public TelaIncluirFuncionario(TelaFuncionarios telaFuncionarios) {
 
-		this.modeloTabela = modeloTabela;
+		this.telaFuncionarios = telaFuncionarios;
 		setTitle("PizzaSys - Incluir Funcionário");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 500, 400);
@@ -70,9 +54,7 @@ public class TelaIncluirFuncionario extends JFrame {
 
 		contentPane.setLayout(new GridBagLayout());
 
-		// =========================
-		// TÍTULO
-		// =========================
+
 
 		JLabel lblTitulo = new JLabel("Incluir Funcionário");
 		lblTitulo.setFont(new Font("Tahoma", Font.BOLD, 20));
@@ -111,9 +93,6 @@ public class TelaIncluirFuncionario extends JFrame {
 		contentPane.add(txtNome, gbc_txtNome);
 		txtNome.setColumns(20);
 
-		// =========================
-		// LOGIN
-		// =========================
 
 		JLabel lblLogin = new JLabel("Login:");
 
@@ -136,9 +115,7 @@ public class TelaIncluirFuncionario extends JFrame {
 
 		contentPane.add(txtLogin, gbc_txtLogin);
 
-		// =========================
-		// SENHA
-		// =========================
+
 
 		JLabel lblSenha = new JLabel("Senha:");
 
@@ -161,9 +138,6 @@ public class TelaIncluirFuncionario extends JFrame {
 
 		contentPane.add(txtSenha, gbc_txtSenha);
 
-		// =========================
-		// FUNÇÃO
-		// =========================
 
 		JLabel lblFuncao = new JLabel("Função:");
 
@@ -190,9 +164,7 @@ public class TelaIncluirFuncionario extends JFrame {
 
 		contentPane.add(cbFuncao, gbc_cbFuncao);
 
-		// =========================
-		// SALÁRIO
-		// =========================
+
 
 		JLabel lblSalario = new JLabel("Salário:");
 
@@ -215,9 +187,7 @@ public class TelaIncluirFuncionario extends JFrame {
 
 		contentPane.add(txtSalario, gbc_txtSalario);
 
-		// =========================
-		// MENSAGEM DE ERRO
-		// =========================
+
 
 		lblErro = new JLabel(" ");
 
@@ -231,53 +201,54 @@ public class TelaIncluirFuncionario extends JFrame {
 
 		contentPane.add(lblErro, gbc_lblErro);
 
-		// =========================
-		// BOTÃO CANCELAR
-		// =========================
 
-		JButton btnCancelar = new JButton("Cancelar");
-
-		btnCancelar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				dispose();
-			}
-		});
-
-		GridBagConstraints gbc_btnCancelar = new GridBagConstraints();
-		gbc_btnCancelar.anchor = GridBagConstraints.EAST;
-		gbc_btnCancelar.insets = new Insets(10, 5, 5, 5);
-		gbc_btnCancelar.gridx = 0;
-		gbc_btnCancelar.gridy = 7;
-
-		contentPane.add(btnCancelar, gbc_btnCancelar);
-
-		// =========================
-		// BOTÃO SALVAR
-		// =========================
 
 		JButton btnSalvar = new JButton("Salvar");
 
 		btnSalvar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				String erro = FuncionariosController.cadastrarFuncionario(txtNome.getText(), txtLogin.getText(),
+						new String(txtSenha.getPassword()), cbFuncao.getSelectedIndex() + 1, txtSalario.getText());
 
-				GeralController.cadastrarFuncionario(TelaIncluirFuncionario.this, modeloTabela, txtNome.getText(),
-						txtLogin.getText(), new String(txtSenha.getPassword()), cbFuncao.getSelectedIndex() + 1,
-						txtSalario.getText());
+				if (erro != null) {
+					mostrarErro(erro);
+					return;
+				}
+
+				telaFuncionarios.atualizarTabela();
+
+				dispose();
 			}
 		});
 
 		GridBagConstraints gbc_btnSalvar = new GridBagConstraints();
-		gbc_btnSalvar.anchor = GridBagConstraints.WEST;
+		gbc_btnSalvar.anchor = GridBagConstraints.EAST;
 		gbc_btnSalvar.insets = new Insets(10, 5, 5, 5);
-		gbc_btnSalvar.gridx = 1;
+		gbc_btnSalvar.gridx = 0;
 		gbc_btnSalvar.gridy = 7;
 
 		contentPane.add(btnSalvar, gbc_btnSalvar);
+
+
+		JButton btnCancelar = new JButton("Cancelar");
+
+		btnCancelar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				dispose();
+			}
+		});
+
+		GridBagConstraints gbc_btnCancelar = new GridBagConstraints();
+		gbc_btnCancelar.anchor = GridBagConstraints.WEST;
+		gbc_btnCancelar.insets = new Insets(10, 5, 5, 5);
+		gbc_btnCancelar.gridx = 1;
+		gbc_btnCancelar.gridy = 7;
+
+		contentPane.add(btnCancelar, gbc_btnCancelar);
 	}
 
-	/**
-	 * Exibe uma mensagem de erro na própria tela.
-	 */
+
 	public void mostrarErro(String mensagem) {
 		lblErro.setText(mensagem);
 	}
