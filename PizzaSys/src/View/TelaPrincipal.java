@@ -75,10 +75,15 @@ public class TelaPrincipal extends JFrame {
 		panelMenu.add(btnPedidos);
 
 		JButton btnFuncionarios = new JButton("Funcionários");
+		btnFuncionarios.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				GeralController.IniciarTelaFuncionarios(TelaPrincipal.this, funcionario);
+			}
+		});
 		panelMenu.add(btnFuncionarios);
 
-		JButton btnProdutos = new JButton("Produtos");
-		panelMenu.add(btnProdutos);
+		JButton btnPizzas = new JButton("Pizzas");
+		panelMenu.add(btnPizzas);
 
 		JButton btnRelatorios = new JButton("Relatórios");
 		panelMenu.add(btnRelatorios);
@@ -89,7 +94,7 @@ public class TelaPrincipal extends JFrame {
 				GeralController.sair();
 			}
 		});
-		
+
 		JButton btnNotificacoes = new JButton("Notificações(" + GeralController.QntdNotificacao(funcionario) + ")");
 		panelMenu.add(btnNotificacoes);
 		panelMenu.add(btnSair);
@@ -98,7 +103,7 @@ public class TelaPrincipal extends JFrame {
 		contentPane.add(panelConteudo, BorderLayout.CENTER);
 		panelConteudo.setLayout(new BorderLayout());
 
-		JLabel lblInicio = new JLabel("Olá "+ funcionario.getNome());
+		JLabel lblInicio = new JLabel("Olá " + funcionario.getNome());
 		lblInicio.setHorizontalAlignment(SwingConstants.CENTER);
 		lblInicio.setFont(new Font("Tahoma", Font.PLAIN, 28));
 		panelConteudo.add(lblInicio, BorderLayout.CENTER);

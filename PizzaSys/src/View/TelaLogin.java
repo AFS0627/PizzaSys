@@ -31,7 +31,6 @@ public class TelaLogin extends JFrame {
 	private JLabel lblEsqueciSenha;
 	private JLabel lblCredenciais;
 
-
 	public TelaLogin() {
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -41,7 +40,7 @@ public class TelaLogin extends JFrame {
 		contentPane.setBorder(new EmptyBorder(10, 10, 10, 10));
 		setContentPane(contentPane);
 		GridBagLayout gbl_contentPane = new GridBagLayout();
-		gbl_contentPane.columnWeights = new double[]{0.0, 1.0};
+		gbl_contentPane.columnWeights = new double[] { 0.0, 1.0 };
 		contentPane.setLayout(gbl_contentPane);
 
 		JLabel lblPizzaSys = new JLabel("PizzaSys");
@@ -109,7 +108,7 @@ public class TelaLogin extends JFrame {
 		gbc_btnEntrar.gridx = 0;
 		gbc_btnEntrar.gridy = 3;
 		contentPane.add(btnEntrar, gbc_btnEntrar);
-		
+
 		lblCredenciais = new JLabel("Credenciais do banco");
 		lblCredenciais.addMouseListener(new MouseAdapter() {
 			@Override
