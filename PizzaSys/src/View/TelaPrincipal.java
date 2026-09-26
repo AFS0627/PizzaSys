@@ -67,6 +67,11 @@ public class TelaPrincipal extends JFrame {
 		contentPane.add(panelMenu, BorderLayout.WEST);
 
 		JButton btnPedidos = new JButton("Pedidos");
+		btnPedidos.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				mostrarPedido();
+			}
+		});
 		panelMenu.add(btnPedidos);
 
 		JButton btnFuncionarios = new JButton("Funcionários");
@@ -158,6 +163,14 @@ public class TelaPrincipal extends JFrame {
 
 	public Funcionario getFuncionario() {
 		return funcionario;
+	}
+
+	public void mostrarPedido() {
+		panelConteudo.removeAll();
+		TelaPedido telaPedido = new TelaPedido(funcionario);
+		panelConteudo.add(telaPedido, BorderLayout.CENTER);
+		panelConteudo.revalidate();
+		panelConteudo.repaint();
 	}
 
 	public void mostrarPizzas() {

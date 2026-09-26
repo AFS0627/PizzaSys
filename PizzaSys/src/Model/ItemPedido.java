@@ -4,11 +4,31 @@ public class ItemPedido {
 	private Pizza pizza;
 	private int quantidade;
 	private double preco;
+	private String observacao;
+	private int tamanho;
 
-	public ItemPedido(Pizza pizza, int quantidade) {
+	public ItemPedido(Pizza pizza, int quantidade, double preco, String observacao, int tamanho) {
 		this.pizza = pizza;
 		this.quantidade = quantidade;
-		this.preco = pizza.getPreco();
+		this.preco = preco;
+		this.observacao = observacao;
+		this.tamanho = tamanho;
+	}
+
+	public int getTamanho() {
+		return tamanho;
+	}
+
+	public void setTamanho(int tamanho) {
+		this.tamanho = tamanho;
+	}
+
+	public String getObservacao() {
+		return observacao;
+	}
+
+	public void setObservacao(String observacao) {
+		this.observacao = observacao;
 	}
 
 	public Pizza getPizza() {
@@ -29,5 +49,9 @@ public class ItemPedido {
 
 	public void setQuantidade(int quantidade) {
 		this.quantidade = quantidade;
+	}
+
+	public void setPreco(double preco) {
+		this.preco = preco;
 	}
 }
