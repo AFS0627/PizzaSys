@@ -27,6 +27,7 @@ public class TelaPrincipal extends JFrame {
 	private JPanel panelMenu;
 	private JPanel panelConteudo;
 	private JPanel panelSuperior;
+	private JPanel painelPrincipal;
 	private JPanel panelInferior;
 
 	private JLabel lblUsuario;
@@ -99,6 +100,13 @@ public class TelaPrincipal extends JFrame {
 		panelMenu.add(btnPizzas);
 
 		JButton btnRelatorios = new JButton("Relatórios");
+		btnRelatorios.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+			  mostrarRelatorios();
+
+			}
+		});
 		panelMenu.add(btnRelatorios);
 
 		JButton btnNotificacoes = new JButton("Notificações (" + GeralController.QntdNotificacao(funcionario) + ")");
@@ -183,5 +191,17 @@ public class TelaPrincipal extends JFrame {
 
 		panelConteudo.revalidate();
 		panelConteudo.repaint();
+	}
+	public void mostrarRelatorios() {
+
+	    panelConteudo.removeAll();
+
+	    TelaRelatorios telaRelatorios = new TelaRelatorios(funcionario);
+
+	    panelConteudo.add(telaRelatorios, BorderLayout.CENTER);
+
+	    panelConteudo.revalidate();
+
+	    panelConteudo.repaint();
 	}
 }
