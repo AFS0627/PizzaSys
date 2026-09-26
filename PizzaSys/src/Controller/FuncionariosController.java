@@ -139,7 +139,7 @@ public class FuncionariosController {
 			return "Atendente";
 
 		case 2:
-			return "Gerente";
+			return "Pizzaiolo";
 
 		case 3:
 			return "Administrador";

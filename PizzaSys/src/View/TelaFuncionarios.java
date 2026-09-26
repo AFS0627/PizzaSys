@@ -63,7 +63,7 @@ public class TelaFuncionarios extends JPanel {
 		JPasswordField txtSenha = new JPasswordField();
 		JComboBox<String> cbFuncao = new JComboBox<>();
 		cbFuncao.addItem("Atendente");
-		cbFuncao.addItem("Gerente");
+		cbFuncao.addItem("Pizzaiolo");
 		cbFuncao.addItem("Administrador");
 		JTextField txtSalario = new JTextField();
 		JPanel painel = new JPanel(new GridLayout(5, 2, 5, 5));
@@ -110,7 +110,7 @@ public class TelaFuncionarios extends JPanel {
 		JPasswordField txtSenha = new JPasswordField(funcionario.getSenha());
 		JComboBox<String> cbFuncao = new JComboBox<>();
 		cbFuncao.addItem("Atendente");
-		cbFuncao.addItem("Gerente");
+		cbFuncao.addItem("Pizzaiolo");
 		cbFuncao.addItem("Administrador");
 		if (funcionario.getFuncao() >= 1 && funcionario.getFuncao() <= 3) {
 			cbFuncao.setSelectedIndex(funcionario.getFuncao() - 1);
