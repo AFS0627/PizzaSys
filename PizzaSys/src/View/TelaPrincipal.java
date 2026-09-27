@@ -1,8 +1,6 @@
-
 package View;
 
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
 import java.awt.GridLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -17,7 +15,6 @@ import javax.swing.border.EmptyBorder;
 
 import Controller.GeralController;
 import Model.Funcionario;
-import java.awt.Color;
 
 public class TelaPrincipal extends JFrame {
 
@@ -27,15 +24,11 @@ public class TelaPrincipal extends JFrame {
 	private JPanel panelMenu;
 	private JPanel panelConteudo;
 	private JPanel panelSuperior;
-	private JPanel painelPrincipal;
 	private JPanel panelInferior;
-
 	private JLabel lblUsuario;
-
 	private Funcionario funcionario;
 
 	public TelaPrincipal(Funcionario funcionario) {
-
 		this.funcionario = funcionario;
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -64,50 +57,60 @@ public class TelaPrincipal extends JFrame {
 		panelSuperior.add(lblUsuario, BorderLayout.EAST);
 
 		panelMenu = new JPanel();
-		panelMenu.setLayout(new GridLayout(6, 1, 5, 5));
+
+		if (funcionario != null && funcionario.getFuncao() == 3) {
+			panelMenu.setLayout(new GridLayout(6, 1, 5, 5));
+		} else {
+			panelMenu.setLayout(new GridLayout(4, 1, 5, 5));
+		}
+
 		contentPane.add(panelMenu, BorderLayout.WEST);
 
 		JButton btnPedidos = new JButton("Pedidos");
+
 		btnPedidos.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				mostrarPedido();
 			}
 		});
+
 		panelMenu.add(btnPedidos);
 
-		JButton btnFuncionarios = new JButton("Funcionários");
+		if (funcionario != null && funcionario.getFuncao() == 3) {
 
-		btnFuncionarios.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+			JButton btnFuncionarios = new JButton("Funcionários");
 
-				if (funcionario != null && funcionario.getFuncao() == 3) {
+			btnFuncionarios.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
 					mostrarFuncionarios();
-
-				} else {
-					GeralController.mostrarSemPermissao(TelaPrincipal.this);
 				}
-			}
-		});
+			});
 
-		panelMenu.add(btnFuncionarios);
+			panelMenu.add(btnFuncionarios);
+		}
 
 		JButton btnPizzas = new JButton("Pizzas");
+
 		btnPizzas.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				mostrarPizzas();
 			}
 		});
+
 		panelMenu.add(btnPizzas);
 
-		JButton btnRelatorios = new JButton("Relatórios");
-		btnRelatorios.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		if (funcionario != null && funcionario.getFuncao() == 3) {
 
-			  mostrarRelatorios();
+			JButton btnRelatorios = new JButton("Relatórios");
 
-			}
-		});
-		panelMenu.add(btnRelatorios);
+			btnRelatorios.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					mostrarRelatorios();
+				}
+			});
+
+			panelMenu.add(btnRelatorios);
+		}
 
 		JButton btnNotificacoes = new JButton("Notificações (" + GeralController.QntdNotificacao(funcionario) + ")");
 
@@ -133,11 +136,11 @@ public class TelaPrincipal extends JFrame {
 		contentPane.add(panelInferior, BorderLayout.SOUTH);
 
 		JLabel lblStatus = new JLabel("PizzaSys - Sistema de gerenciamento");
+
 		panelInferior.add(lblStatus);
 	}
 
 	public void mostrarInicio() {
-
 		panelConteudo.removeAll();
 
 		JLabel lblInicio;
@@ -149,6 +152,7 @@ public class TelaPrincipal extends JFrame {
 		}
 
 		lblInicio.setHorizontalAlignment(SwingConstants.CENTER);
+
 		lblInicio.setFont(new Font("Tahoma", Font.PLAIN, 28));
 
 		panelConteudo.add(lblInicio, BorderLayout.CENTER);
@@ -158,6 +162,10 @@ public class TelaPrincipal extends JFrame {
 	}
 
 	public void mostrarFuncionarios() {
+		if (funcionario == null || funcionario.getFuncao() != 3) {
+			GeralController.mostrarSemPermissao(this);
+			return;
+		}
 
 		panelConteudo.removeAll();
 
@@ -175,14 +183,16 @@ public class TelaPrincipal extends JFrame {
 
 	public void mostrarPedido() {
 		panelConteudo.removeAll();
+
 		TelaPedido telaPedido = new TelaPedido(funcionario);
+
 		panelConteudo.add(telaPedido, BorderLayout.CENTER);
+
 		panelConteudo.revalidate();
 		panelConteudo.repaint();
 	}
 
 	public void mostrarPizzas() {
-
 		panelConteudo.removeAll();
 
 		TelaPizzas telaPizzas = new TelaPizzas();
@@ -192,16 +202,20 @@ public class TelaPrincipal extends JFrame {
 		panelConteudo.revalidate();
 		panelConteudo.repaint();
 	}
+
 	public void mostrarRelatorios() {
+		if (funcionario == null || funcionario.getFuncao() != 3) {
+			GeralController.mostrarSemPermissao(this);
+			return;
+		}
 
-	    panelConteudo.removeAll();
+		panelConteudo.removeAll();
 
-	    TelaRelatorios telaRelatorios = new TelaRelatorios(funcionario);
+		TelaRelatorios telaRelatorios = new TelaRelatorios(funcionario);
 
-	    panelConteudo.add(telaRelatorios, BorderLayout.CENTER);
+		panelConteudo.add(telaRelatorios, BorderLayout.CENTER);
 
-	    panelConteudo.revalidate();
-
-	    panelConteudo.repaint();
+		panelConteudo.revalidate();
+		panelConteudo.repaint();
 	}
 }

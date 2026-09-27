@@ -1,151 +1,167 @@
 package Controller;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import DAO.FuncionarioDAO;
 import Model.Funcionario;
 
 public class FuncionariosController {
 
-	private static List<Funcionario> funcionarios = new ArrayList<>();
-	private static int proximoId = 1;
+    public static List<Funcionario> getFuncionarios() {
+        try {
+            return FuncionarioDAO.buscarTodos();
+        } catch (SQLException e) {
+            throw new RuntimeException(
+                    "Não foi possível carregar os funcionários.",
+                    e
+            );
+        }
+    }
 
-	public static List<Funcionario> getFuncionarios() {
-		return funcionarios;
-	}
+    public static String cadastrarFuncionario(
+            String nome,
+            String login,
+            String senha,
+            int funcao,
+            String salarioTexto) {
 
-	public static String cadastrarFuncionario(
-			String nome,
-			String login,
-			String senha,
-			int funcao,
-			String salarioTexto) {
+        if (nome == null || nome.trim().isEmpty()) {
+            return "Digite o nome do funcionário.";
+        }
 
-		if (nome == null || nome.trim().isEmpty()) {
-			return "Digite o nome do funcionário.";
-		}
+        if (login == null || login.trim().isEmpty()) {
+            return "Digite o login.";
+        }
 
-		if (login == null || login.trim().isEmpty()) {
-			return "Digite o login.";
-		}
+        if (senha == null || senha.trim().isEmpty()) {
+            return "Digite a senha.";
+        }
 
-		if (senha == null || senha.trim().isEmpty()) {
-			return "Digite a senha.";
-		}
+        if (salarioTexto == null || salarioTexto.trim().isEmpty()) {
+            return "Digite o salário.";
+        }
 
-		if (salarioTexto == null || salarioTexto.trim().isEmpty()) {
-			return "Digite o salário.";
-		}
+        double salario;
 
-		double salario;
+        try {
+            salario = Double.parseDouble(
+                    salarioTexto.replace(",", "."));
+        } catch (NumberFormatException e) {
+            return "Digite um salário válido.";
+        }
 
-		try {
-			salario = Double.parseDouble(
-					salarioTexto.replace(",", "."));
-		} catch (NumberFormatException e) {
-			return "Digite um salário válido.";
-		}
+        Funcionario funcionario = new Funcionario(
+                0,
+                nome.trim(),
+                login.trim(),
+                senha,
+                funcao,
+                salario
+        );
 
-		Funcionario funcionario = new Funcionario(
-				proximoId++,
-				nome.trim(),
-				login.trim(),
-				senha,
-				funcao,
-				salario);
+        try {
+            FuncionarioDAO.inserir(funcionario);
+            return null;
+        } catch (SQLException e) {
+            return "Não foi possível cadastrar o funcionário.";
+        }
+    }
 
-		funcionarios.add(funcionario);
+    public static String alterarFuncionario(
+            int id,
+            String nome,
+            String login,
+            String senha,
+            int funcao,
+            String salarioTexto) {
 
-		return null;
-	}
+        Funcionario funcionario;
 
+        try {
+            funcionario = FuncionarioDAO.buscarPorId(id);
+        } catch (SQLException e) {
+            return "Não foi possível localizar o funcionário.";
+        }
 
-			public static String alterarFuncionario(
-			        int id,
-			        String nome,
-			        String login,
-			        String senha,
-			        int funcao,
-			        String salarioTexto) {
+        if (funcionario == null) {
+            return "Funcionário não encontrado.";
+        }
 
-		Funcionario funcionario = buscarFuncionario(id);
+        if (nome == null || nome.trim().isEmpty()) {
+            return "Digite o nome do funcionário.";
+        }
 
-		if (funcionario == null) {
-			return "Funcionário não encontrado.";
-		}
+        if (login == null || login.trim().isEmpty()) {
+            return "Digite o login.";
+        }
 
-		if (nome == null || nome.trim().isEmpty()) {
-			return "Digite o nome do funcionário.";
-		}
+        if (senha == null || senha.trim().isEmpty()) {
+            return "Digite a senha.";
+        }
 
-		if (login == null || login.trim().isEmpty()) {
-			return "Digite o login.";
-		}
+        if (salarioTexto == null || salarioTexto.trim().isEmpty()) {
+            return "Digite o salário.";
+        }
 
-		if (senha == null || senha.trim().isEmpty()) {
-			return "Digite a senha.";
-		}
+        double salario;
 
-		if (salarioTexto == null || salarioTexto.trim().isEmpty()) {
-			return "Digite o salário.";
-		}
+        try {
+            salario = Double.parseDouble(
+                    salarioTexto.replace(",", "."));
+        } catch (NumberFormatException e) {
+            return "Digite um salário válido.";
+        }
 
-		double salario;
+        funcionario.setNome(nome.trim());
+        funcionario.setLogin(login.trim());
+        funcionario.setSenha(senha);
+        funcionario.setFuncao(funcao);
+        funcionario.setSalario(salario);
 
-		try {
-			salario = Double.parseDouble(
-					salarioTexto.replace(",", "."));
-		} catch (NumberFormatException e) {
-			return "Digite um salário válido.";
-		}
+        try {
+            FuncionarioDAO.atualizar(funcionario);
+            return null;
+        } catch (SQLException e) {
+            return "Não foi possível alterar o funcionário.";
+        }
+    }
 
-		funcionario.setNome(nome.trim());
-		funcionario.setLogin(login.trim());
-		funcionario.setSenha(senha);
-		funcionario.setFuncao(funcao);
-		funcionario.setSalario(salario);
+    public static boolean excluirFuncionario(int id) {
+        try {
+            Funcionario funcionario = FuncionarioDAO.buscarPorId(id);
 
-		return null;
-	}
+            if (funcionario == null) {
+                return false;
+            }
 
-	public static boolean excluirFuncionario(int id) {
+            FuncionarioDAO.excluir(id);
+            return true;
 
-		Funcionario funcionario = buscarFuncionario(id);
+        } catch (SQLException e) {
+            return false;
+        }
+    }
 
-		if (funcionario == null) {
-			return false;
-		}
+    public static Funcionario buscarFuncionario(int id) {
+        try {
+            return FuncionarioDAO.buscarPorId(id);
+        } catch (SQLException e) {
+            return null;
+        }
+    }
 
-		return funcionarios.remove(funcionario);
-	}
-
-	public static Funcionario buscarFuncionario(int id) {
-
-		for (Funcionario funcionario : funcionarios) {
-
-			if (funcionario.getId() == id) {
-				return funcionario;
-			}
-		}
-
-		return null;
-	}
-
-	public static String nomeFuncao(int funcao) {
-
-		switch (funcao) {
-
-		case 1:
-			return "Atendente";
-
-		case 2:
-			return "Pizzaiolo";
-
-		case 3:
-			return "Administrador";
-
-		default:
-			return "Desconhecida";
-		}
-	}
+    public static String nomeFuncao(int funcao) {
+        switch (funcao) {
+        case 1:
+            return "Atendente";
+        case 2:
+            return "Pizzaiolo";
+        case 3:
+            return "Administrador";
+        default:
+            return "Desconhecida";
+        }
+    }
 }

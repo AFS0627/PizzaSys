@@ -1,189 +1,145 @@
 package Controller;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
-import Model.Movimentacao;
+import DAO.RelatorioDAO;
+import Model.Funcionario;
 import Model.Pedido;
+import Model.Relatorio;
 
 public class RelatoriosController {
 
-    private static final List<Movimentacao> movimentacoes =
-            new ArrayList<>();
+	public static void registrarMovimentacao(Pedido pedido, String acao) {
+		if (pedido == null) {
+			return;
+		}
 
-    public static void registrarMovimentacao(
-            Pedido pedido,
-            String acao) {
+		registrarMovimentacao(pedido.getFuncionario(), acao, pedido.getId());
+	}
 
-        if (pedido == null) {
-            return;
-        }
+	public static void registrarMovimentacao(Funcionario funcionario, String acao, int idPedido) {
 
-        movimentacoes.add(
-                new Movimentacao(
-                        pedido.getFuncionario(),
-                        acao,
-                        pedido.getId()));
-    }
+		try {
+			Relatorio relatorio = new Relatorio(funcionario, acao, idPedido);
 
-    public static void registrarMovimentacao(
-            Model.Funcionario funcionario,
-            String acao,
-            int idPedido) {
+			RelatorioDAO.inserir(relatorio);
 
-        movimentacoes.add(
-                new Movimentacao(
-                        funcionario,
-                        acao,
-                        idPedido));
-    }
+		} catch (SQLException e) {
+			throw new RuntimeException("Não foi possível registrar a movimentação.", e);
+		}
+	}
 
-    public static List<Movimentacao> getMovimentacoes() {
+	public static List<Relatorio> getMovimentacoes() {
+		try {
+			return RelatorioDAO.buscarTodos();
+		} catch (SQLException e) {
+			throw new RuntimeException("Não foi possível carregar as movimentações.", e);
+		}
+	}
 
-        List<Movimentacao> lista =
-                new ArrayList<>(movimentacoes);
+	public static List<Relatorio> getMovimentacoesFuncionario(
+	        Funcionario funcionario) {
 
-        lista.sort(
-                Comparator.comparing(
-                        Movimentacao::getDataHora)
-                        .reversed());
+	    if (funcionario == null) {
+	        return new ArrayList<>();
+	    }
 
-        return lista;
-    }
+	    try {
+	        return RelatorioDAO.buscarPorFuncionario(
+	                funcionario.getId()
+	        );
+	    } catch (SQLException e) {
+	        throw new RuntimeException(
+	                "Não foi possível carregar as movimentações do funcionário.",
+	                e
+	        );
+	    }
+	}
 
-    public static List<Movimentacao> getMovimentacoesFuncionario(
-            Model.Funcionario funcionario) {
+	public static double getFaturamento() {
+		double total = 0;
 
-        List<Movimentacao> resultado =
-                new ArrayList<>();
+		for (Pedido pedido : PedidoController.getPedidosConcluidos()) {
+			total += pedido.getValorTotal();
+		}
 
-        if (funcionario == null) {
-            return resultado;
-        }
+		return total;
+	}
 
-        for (Movimentacao movimentacao : movimentacoes) {
+	public static int getQuantidadePedidos() {
+		return PedidoController.getPedidosConcluidos().size();
+	}
 
-            if (movimentacao.getFuncionario() == funcionario) {
-                resultado.add(movimentacao);
-            }
-        }
+	public static int getQuantidadePagamentos(int formaPagamento) {
+		int quantidade = 0;
 
-        resultado.sort(
-                Comparator.comparing(
-                        Movimentacao::getDataHora)
-                        .reversed());
+		for (Pedido pedido : PedidoController.getPedidosConcluidos()) {
+			if (pedido.getFormaPagamento() == formaPagamento) {
+				quantidade++;
+			}
+		}
 
-        return resultado;
-    }
+		return quantidade;
+	}
 
-    public static double getFaturamento() {
+	public static double getFaturamentoPagamento(int formaPagamento) {
+		double total = 0;
 
-        double total = 0;
+		for (Pedido pedido : PedidoController.getPedidosConcluidos()) {
+			if (pedido.getFormaPagamento() == formaPagamento) {
+				total += pedido.getValorTotal();
+			}
+		}
 
-        for (Pedido pedido :
-                PedidoController.getPedidosConcluidos()) {
+		return total;
+	}
 
-            total += pedido.getValorTotal();
-        }
+	public static int getQuantidadeDinheiro() {
+		return getQuantidadePagamentos(1);
+	}
 
-        return total;
-    }
+	public static int getQuantidadePix() {
+		return getQuantidadePagamentos(2);
+	}
 
-    public static int getQuantidadePedidos() {
+	public static int getQuantidadeDebito() {
+		return getQuantidadePagamentos(3);
+	}
 
-        return PedidoController
-                .getPedidosConcluidos()
-                .size();
-    }
+	public static int getQuantidadeCredito() {
+		return getQuantidadePagamentos(4);
+	}
 
-    public static int getQuantidadePagamentos(
-            int formaPagamento) {
+	public static double getFaturamentoDinheiro() {
+		return getFaturamentoPagamento(1);
+	}
 
-        int quantidade = 0;
+	public static double getFaturamentoPix() {
+		return getFaturamentoPagamento(2);
+	}
 
-        for (Pedido pedido :
-                PedidoController.getPedidosConcluidos()) {
+	public static double getFaturamentoDebito() {
+		return getFaturamentoPagamento(3);
+	}
 
-            if (pedido.getFormaPagamento()
-                    == formaPagamento) {
+	public static double getFaturamentoCredito() {
+		return getFaturamentoPagamento(4);
+	}
 
-                quantidade++;
-            }
-        }
-
-        return quantidade;
-    }
-
-    public static double getFaturamentoPagamento(
-            int formaPagamento) {
-
-        double total = 0;
-
-        for (Pedido pedido :
-                PedidoController.getPedidosConcluidos()) {
-
-            if (pedido.getFormaPagamento()
-                    == formaPagamento) {
-
-                total += pedido.getValorTotal();
-            }
-        }
-
-        return total;
-    }
-
-    public static int getQuantidadeDinheiro() {
-        return getQuantidadePagamentos(1);
-    }
-
-    public static int getQuantidadePix() {
-        return getQuantidadePagamentos(2);
-    }
-
-    public static int getQuantidadeDebito() {
-        return getQuantidadePagamentos(3);
-    }
-
-    public static int getQuantidadeCredito() {
-        return getQuantidadePagamentos(4);
-    }
-
-    public static double getFaturamentoDinheiro() {
-        return getFaturamentoPagamento(1);
-    }
-
-    public static double getFaturamentoPix() {
-        return getFaturamentoPagamento(2);
-    }
-
-    public static double getFaturamentoDebito() {
-        return getFaturamentoPagamento(3);
-    }
-
-    public static double getFaturamentoCredito() {
-        return getFaturamentoPagamento(4);
-    }
-
-    public static String nomeFormaPagamento(
-            int formaPagamento) {
-
-        switch (formaPagamento) {
-
-        case 1:
-            return "Dinheiro";
-
-        case 2:
-            return "Pix";
-
-        case 3:
-            return "Débito";
-
-        case 4:
-            return "Crédito";
-
-        default:
-            return "Não informado";
-        }
-    }
+	public static String nomeFormaPagamento(int formaPagamento) {
+		switch (formaPagamento) {
+		case 1:
+			return "Dinheiro";
+		case 2:
+			return "Pix";
+		case 3:
+			return "Débito";
+		case 4:
+			return "Crédito";
+		default:
+			return "Não informado";
+		}
+	}
 }
