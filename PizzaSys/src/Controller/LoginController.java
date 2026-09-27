@@ -1,7 +1,10 @@
 package Controller;
 
+import java.sql.SQLException;
+
 import javax.swing.JOptionPane;
 
+import DAO.FuncionarioDAO;
 import Model.Funcionario;
 import View.TelaBanco;
 import View.TelaLogin;
@@ -11,47 +14,51 @@ public class LoginController {
 
 	public static void iniciarSistema() {
 
-		Funcionario admin = new Funcionario(1, "Administrador", "admin", "3", 3, 2500);
-
-		Funcionario admin1 = new Funcionario(2, "Gerente", "admin", "2", 2, 2500);
-
-		Funcionario admin2 = new Funcionario(3, "Atendente", "admin", "1", 1, 2500);
-
-		FuncionariosController.getFuncionarios().add(admin);
-		FuncionariosController.getFuncionarios().add(admin1);
-		FuncionariosController.getFuncionarios().add(admin2);
-
 		TelaLogin telaLogin = new TelaLogin();
 		telaLogin.setVisible(true);
 	}
 
 	public static void realizarLogin(String login, String senha, TelaLogin telaLogin) {
 
-		for (Funcionario funcionario : FuncionariosController.getFuncionarios()) {
+		if (login.trim().isEmpty() || senha.trim().isEmpty()) {
+			JOptionPane.showMessageDialog(telaLogin, "Informe o login e a senha.", "Atenção",
+					JOptionPane.WARNING_MESSAGE);
+			return;
+		}
 
-			if (funcionario.getLogin().equals(login) && funcionario.getSenha().equals(senha)) {
+		try {
 
-				JOptionPane.showMessageDialog(null, "Bem-vindo, " + funcionario.getNome() + "!");
+			Funcionario funcionario = FuncionarioDAO.realizarLogin(login, senha);
 
-				System.out.println("Deu certo!");
+			if (funcionario != null) {
+
+				JOptionPane.showMessageDialog(telaLogin, "Bem-vindo, " + funcionario.getNome() + "!");
 
 				TelaPrincipal telaPrincipal = new TelaPrincipal(funcionario);
-
 				telaPrincipal.setVisible(true);
 
 				telaLogin.dispose();
 
-				return;
-			}
-		}
+			} else {
 
-		JOptionPane.showMessageDialog(null, "Login ou senha incorretos.", "Erro", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(telaLogin, "Login ou senha incorretos.", "Erro",
+						JOptionPane.ERROR_MESSAGE);
+			}
+
+		} catch (SQLException e) {
+
+			JOptionPane.showMessageDialog(telaLogin,
+					"Não foi possível conectar ao banco de dados.\n\n" + "Verifique se o MySQL está funcionando.",
+					"Erro de conexão", JOptionPane.ERROR_MESSAGE);
+
+			System.err.println("Erro ao conectar ao banco:");
+			e.printStackTrace();
+		}
 	}
 
 	public static void IniciarTelaBanco() {
 
 		TelaBanco telaBanco = new TelaBanco();
-
 		telaBanco.setVisible(true);
 	}
 }
