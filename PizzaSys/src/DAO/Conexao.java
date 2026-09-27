@@ -4,13 +4,24 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import Model.ConfiguracaoBanco;
+
 public class Conexao {
 
-    private static final String URL = "jdbc:mysql://localhost:3306/pizzasys?useSSL=false&serverTimezone=America/Sao_Paulo";
-    private static final String USUARIO = "root";
-    private static final String SENHA = "1234";
+	public static Connection conectar() throws SQLException {
 
-    public static Connection conectar() throws SQLException {
-        return DriverManager.getConnection(URL, USUARIO, SENHA);
-    }
+		try {
+
+			ConfiguracaoBanco configuracao = ConfiguracaoBancoDAO.carregar();
+
+			String url = "jdbc:mysql://" + configuracao.getServidor() + "/" + configuracao.getBanco()
+					+ "?useSSL=false&serverTimezone=America/Sao_Paulo";
+
+			return DriverManager.getConnection(url, configuracao.getUsuario(), configuracao.getSenha());
+
+		} catch (Exception e) {
+
+			throw new SQLException("Não foi possível carregar as configurações do banco.", e);
+		}
+	}
 }
