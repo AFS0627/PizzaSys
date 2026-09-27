@@ -6,9 +6,9 @@ public class Pizza {
     private String nome;
     private double preco;
     private String descricao;
-    private String imagem;
+    private byte[] imagem;
 
-    public Pizza(int id, String nome, double preco, String descricao, String imagem) {
+    public Pizza(int id, String nome, double preco, String descricao, byte[] imagem) {
         this.id = id;
         this.nome = nome;
         this.preco = preco;
@@ -32,7 +32,7 @@ public class Pizza {
         return descricao;
     }
 
-    public String getImagem() {
+    public byte[] getImagem() {
         return imagem;
     }
 
@@ -48,7 +48,7 @@ public class Pizza {
         this.descricao = descricao;
     }
 
-    public void setImagem(String imagem) {
+    public void setImagem(byte[] imagem) {
         this.imagem = imagem;
     }
 }

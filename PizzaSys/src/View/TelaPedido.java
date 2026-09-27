@@ -708,18 +708,15 @@ public class TelaPedido extends JPanel {
 
 	private ImageIcon carregarImagem(Pizza pizza) {
 
-		if (pizza.getImagem() == null || pizza.getImagem().trim().isEmpty()) {
+	    if (pizza == null) {
+	        return null;
+	    }
 
-			return null;
-		}
+	    if (pizza.getImagem() == null || pizza.getImagem().length == 0) {
+	        return null;
+	    }
 
-		File arquivo = new File(pizza.getImagem());
-
-		if (!arquivo.exists()) {
-			return null;
-		}
-
-		return new ImageIcon(arquivo.getAbsolutePath());
+	    return new ImageIcon(pizza.getImagem());
 	}
 
 	public Pedido getPedido() {

@@ -3,19 +3,15 @@ package Controller;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
+import DAO.PedidoDAO;
 import Model.Funcionario;
 import Model.ItemPedido;
 import Model.Pedido;
 import Model.Pizza;
 
 public class PedidoController {
-
-	private static final List<Pedido> pedidos = new ArrayList<>();
-
-	private static int proximoId = 1;
 
 	private static final DateTimeFormatter FORMATO_DATA = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
@@ -27,7 +23,7 @@ public class PedidoController {
 
 		String data = LocalDateTime.now().format(FORMATO_DATA);
 
-		return new Pedido(proximoId++, data, funcionario);
+		return new Pedido(0, data, funcionario);
 	}
 
 	public static String salvarPedido(Pedido pedido) {
@@ -40,50 +36,56 @@ public class PedidoController {
 			return "Adicione pelo menos uma pizza ao pedido.";
 		}
 
-		if (pedidos.contains(pedido)) {
-			return "Este pedido já foi salvo.";
+		if (pedido.getFuncionario() == null) {
+			return "Funcionário não informado.";
 		}
 
-		pedido.setStatus("Pendente");
-		pedidos.add(pedido);
+		try {
+			pedido.setStatus("Pendente");
 
-		return null;
+			int id = PedidoDAO.inserir(pedido);
+
+			pedido.setId(id);
+
+			return null;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "Não foi possível salvar o pedido no banco de dados.";
+		}
 	}
 
 	public static List<Pedido> getPedidos() {
-		return new ArrayList<>(pedidos);
+
+		try {
+			return PedidoDAO.buscarTodos();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ArrayList<Pedido>();
+		}
 	}
 
 	public static List<Pedido> getPedidosPendentes() {
 
-		List<Pedido> pendentes = new ArrayList<>();
+		try {
+			return PedidoDAO.buscarPorStatus("Pendente");
 
-		for (Pedido pedido : pedidos) {
-
-			if ("Pendente".equals(pedido.getStatus())) {
-				pendentes.add(pedido);
-			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ArrayList<Pedido>();
 		}
-
-		pendentes.sort(Comparator.comparingInt(Pedido::getId));
-
-		return pendentes;
 	}
 
 	public static List<Pedido> getPedidosConcluidos() {
 
-		List<Pedido> concluidos = new ArrayList<>();
+		try {
+			return PedidoDAO.buscarPorStatus("Concluído");
 
-		for (Pedido pedido : pedidos) {
-
-			if ("Concluído".equals(pedido.getStatus())) {
-				concluidos.add(pedido);
-			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ArrayList<Pedido>();
 		}
-
-		concluidos.sort(Comparator.comparingInt(Pedido::getId));
-
-		return concluidos;
 	}
 
 	public static double calcularPrecoTamanho(Pizza pizza, int tamanho) {
@@ -204,13 +206,28 @@ public class PedidoController {
 
 		pedido.setStatus("Em andamento");
 
-		return null;
+		try {
+			PedidoDAO.atualizarStatus(pedido);
+
+			return null;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
+			pedido.setStatus("Pendente");
+
+			return "Não foi possível iniciar a edição do pedido.";
+		}
 	}
 
 	public static String salvarEdicao(Pedido pedido) {
 
 		if (pedido == null) {
 			return "Pedido inválido.";
+		}
+
+		if (pedido.getId() <= 0) {
+			return "Pedido ainda não foi salvo.";
 		}
 
 		if (!"Em andamento".equals(pedido.getStatus())) {
@@ -223,13 +240,28 @@ public class PedidoController {
 
 		pedido.setStatus("Pendente");
 
-		return null;
+		try {
+			PedidoDAO.atualizarPedido(pedido);
+
+			return null;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
+			pedido.setStatus("Em andamento");
+
+			return "Não foi possível salvar as alterações do pedido.";
+		}
 	}
 
 	public static String cancelarEdicao(Pedido pedido) {
 
 		if (pedido == null) {
 			return "Pedido inválido.";
+		}
+
+		if (pedido.getId() <= 0) {
+			return "Pedido ainda não foi salvo.";
 		}
 
 		if (!"Em andamento".equals(pedido.getStatus())) {
@@ -242,7 +274,18 @@ public class PedidoController {
 
 		pedido.setStatus("Pendente");
 
-		return null;
+		try {
+			PedidoDAO.atualizarStatus(pedido);
+
+			return null;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
+			pedido.setStatus("Em andamento");
+
+			return "Não foi possível cancelar a edição.";
+		}
 	}
 
 	public static String finalizarPedido(Pedido pedido, int formaPagamento) {
@@ -251,7 +294,7 @@ public class PedidoController {
 			return "Pedido inválido.";
 		}
 
-		if (!pedidos.contains(pedido)) {
+		if (pedido.getId() <= 0) {
 			return "Este pedido ainda não foi salvo.";
 		}
 
@@ -264,14 +307,24 @@ public class PedidoController {
 		}
 
 		if (formaPagamento < 1 || formaPagamento > 4) {
-
 			return "Forma de pagamento inválida.";
 		}
 
 		pedido.setFormaPagamento(formaPagamento);
 		pedido.setStatus("Concluído");
 
-		return null;
+		try {
+			PedidoDAO.finalizarPedido(pedido, formaPagamento);
+
+			return null;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
+			pedido.setStatus("Pendente");
+
+			return "Não foi possível concluir o pedido.";
+		}
 	}
 
 	public static String excluirPedido(Pedido pedido) {
@@ -280,7 +333,7 @@ public class PedidoController {
 			return "Pedido inválido.";
 		}
 
-		if (!pedidos.contains(pedido)) {
+		if (pedido.getId() <= 0) {
 			return "Pedido não encontrado.";
 		}
 
@@ -288,9 +341,16 @@ public class PedidoController {
 			return "Pedidos concluídos não podem ser excluídos.";
 		}
 
-		pedidos.remove(pedido);
+		try {
+			PedidoDAO.excluir(pedido.getId());
 
-		return null;
+			return null;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
+			return "Não foi possível excluir o pedido.";
+		}
 	}
 
 	public static double calcularTotal(Pedido pedido) {
@@ -304,14 +364,17 @@ public class PedidoController {
 
 	public static Pedido buscarPedido(int id) {
 
-		for (Pedido pedido : pedidos) {
-
-			if (pedido.getId() == id) {
-				return pedido;
-			}
+		if (id <= 0) {
+			return null;
 		}
 
-		return null;
+		try {
+			return PedidoDAO.buscarPorId(id);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	public static String nomeFormaPagamento(int formaPagamento) {

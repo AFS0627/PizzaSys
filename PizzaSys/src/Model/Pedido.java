@@ -5,73 +5,79 @@ import java.util.List;
 
 public class Pedido {
 
-	private int id;
-	private String data;
-	private String status;
-	private Funcionario funcionario;
-	private List<ItemPedido> itens;
-	private int formaPagamento;
+    private int id;
+    private String data;
+    private String status;
+    private Funcionario funcionario;
+    private List<ItemPedido> itens;
+    private int formaPagamento;
 
-	public Pedido(int id, String data, Funcionario funcionario) {
-		this.id = id;
-		this.data = data;
-		this.funcionario = funcionario;
-		this.status = "Pendente";
-		this.itens = new ArrayList<>();
-		this.formaPagamento = 0;
-	}
+    public Pedido(int id, String data, Funcionario funcionario) {
+        this.id = id;
+        this.data = data;
+        this.funcionario = funcionario;
+        this.status = "Pendente";
+        this.itens = new ArrayList<>();
+        this.formaPagamento = 0;
+    }
 
-	public int getId() {
-		return id;
-	}
+    public int getId() {
+        return id;
+    }
 
-	public String getData() {
-		return data;
-	}
+    public void setId(int id) {
+        this.id = id;
+    }
 
-	public String getStatus() {
-		return status;
-	}
+    public String getData() {
+        return data;
+    }
 
-	public Funcionario getFuncionario() {
-		return funcionario;
-	}
+    public String getStatus() {
+        return status;
+    }
 
-	public List<ItemPedido> getItens() {
-		return itens;
-	}
+    public Funcionario getFuncionario() {
+        return funcionario;
+    }
 
-	public int getFormaPagamento() {
-		return formaPagamento;
-	}
+    public List<ItemPedido> getItens() {
+        return itens;
+    }
 
-	public void setFormaPagamento(int formaPagamento) {
-		this.formaPagamento = formaPagamento;
-	}
+    public int getFormaPagamento() {
+        return formaPagamento;
+    }
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+    public void setFormaPagamento(int formaPagamento) {
+        this.formaPagamento = formaPagamento;
+    }
 
-	public void adicionarItem(ItemPedido item) {
-		if (item != null) {
-			itens.add(item);
-		}
-	}
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-	public void removerItem(ItemPedido item) {
-		itens.remove(item);
-	}
+    public void adicionarItem(ItemPedido item) {
+        if (item != null) {
+            itens.add(item);
+        }
+    }
 
-	public double getValorTotal() {
-		double total = 0;
+    public void removerItem(ItemPedido item) {
+        itens.remove(item);
+    }
 
-		for (ItemPedido item : itens) {
-			if (item != null) {
-				total += item.getSubtotal();
-			}
-		}
+    public double getValorTotal() {
 
-		return total;
-	}
+        double total = 0;
+
+        for (ItemPedido item : itens) {
+
+            if (item != null) {
+                total += item.getSubtotal();
+            }
+        }
+
+        return total;
+    }
 }
