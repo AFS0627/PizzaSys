@@ -2,51 +2,47 @@ package Model;
 
 public class Notificacao {
 
-	private int id;
+    private int id;
+    private String titulo;
+    private String mensagem;
+    private boolean lida;
 
-	private String titulo;
+    public Notificacao(int id, String titulo, String mensagem) {
+        this.id = id;
+        this.titulo = titulo;
+        this.mensagem = mensagem;
+        this.lida = false;
+    }
 
-	private String mensagem;
+    public int getId() {
+        return id;
+    }
 
-	private boolean lida;
+    public String getTitulo() {
+        return titulo;
+    }
 
-	public Notificacao(int id, String titulo, String mensagem) {
+    public String getMensagem() {
+        return mensagem;
+    }
 
-		this.id = id;
-		this.titulo = titulo;
-		this.mensagem = mensagem;
-		this.lida = false;
-	}
+    public boolean isLida() {
+        return lida;
+    }
 
-	public int getId() {
-		return id;
-	}
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
 
-	public String getTitulo() {
-		return titulo;
-	}
+    public void setMensagem(String mensagem) {
+        this.mensagem = mensagem;
+    }
 
-	public String getMensagem() {
-		return mensagem;
-	}
+    public void marcarComoLida() {
+        this.lida = true;
+    }
 
-	public boolean isLida() {
-		return lida;
-	}
-
-	public void setTitulo(String titulo) {
-		this.titulo = titulo;
-	}
-
-	public void setMensagem(String mensagem) {
-		this.mensagem = mensagem;
-	}
-
-	public void marcarComoLida() {
-		this.lida = true;
-	}
-
-	public void marcarComoNaoLida() {
-		this.lida = false;
-	}
+    public void marcarComoNaoLida() {
+        this.lida = false;
+    }
 }

@@ -9,6 +9,7 @@ import Model.Funcionario;
 import View.TelaBanco;
 import View.TelaLogin;
 import View.TelaPrincipal;
+import View.TelaSenha;
 
 public class LoginController {
 
@@ -61,4 +62,13 @@ public class LoginController {
 		TelaBanco telaBanco = new TelaBanco();
 		telaBanco.setVisible(true);
 	}
+	
+	public static void IniciarTelaSenha() {
+
+		TelaSenha telaSenha = new TelaSenha();
+		telaSenha.setVisible(true);
+	}
+
+	
+	
 }

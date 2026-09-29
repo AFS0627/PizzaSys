@@ -14,6 +14,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import Controller.GeralController;
+import Controller.NotificacoesController;
 import Model.Funcionario;
 
 public class TelaPrincipal extends JFrame {
@@ -26,6 +27,7 @@ public class TelaPrincipal extends JFrame {
 	private JPanel panelSuperior;
 	private JPanel panelInferior;
 	private JLabel lblUsuario;
+	private JButton btnNotificacoes;
 	private Funcionario funcionario;
 
 	public TelaPrincipal(Funcionario funcionario) {
@@ -112,8 +114,12 @@ public class TelaPrincipal extends JFrame {
 			panelMenu.add(btnRelatorios);
 		}
 
-		JButton btnNotificacoes = new JButton("Notificações (" + GeralController.QntdNotificacao(funcionario) + ")");
-
+		btnNotificacoes = new JButton("Notificações (" + NotificacoesController.quantidadeNaoLidas(funcionario) + ")");
+		btnNotificacoes.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				mostrarNotificacoes();
+			}
+		});
 		panelMenu.add(btnNotificacoes);
 
 		JButton btnSair = new JButton("Sair");
@@ -217,5 +223,19 @@ public class TelaPrincipal extends JFrame {
 
 		panelConteudo.revalidate();
 		panelConteudo.repaint();
+	}
+
+	public void mostrarNotificacoes() {
+		panelConteudo.removeAll();
+		TelaNotificacoes telaNotificacoes = new TelaNotificacoes(funcionario, this);
+		panelConteudo.add(telaNotificacoes, BorderLayout.CENTER);
+		atualizarContadorNotificacoes();
+		panelConteudo.revalidate();
+		panelConteudo.repaint();
+	}
+
+	public void atualizarContadorNotificacoes() {
+		int quantidade = NotificacoesController.quantidadeNaoLidas(funcionario);
+		btnNotificacoes.setText("Notificações (" + quantidade + ")");
 	}
 }

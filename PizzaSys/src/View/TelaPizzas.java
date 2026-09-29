@@ -32,775 +32,422 @@ import Model.Pizza;
 
 public class TelaPizzas extends JPanel {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    private JPanel panelFeed;
+	private JPanel panelFeed;
 
-    private Pizza pizzaSelecionada;
+	private Pizza pizzaSelecionada;
 
-    private JLabel lblErro;
+	private JLabel lblErro;
 
-    private Map<Pizza, JPanel> paineisPizza =
-            new HashMap<Pizza, JPanel>();
+	private Map<Pizza, JPanel> paineisPizza = new HashMap<Pizza, JPanel>();
 
-    public TelaPizzas() {
+	public TelaPizzas() {
 
-        setLayout(new BorderLayout(10, 10));
+		setLayout(new BorderLayout(10, 10));
 
-        JPanel panelSuperior =
-                new JPanel(new BorderLayout());
+		JPanel panelSuperior = new JPanel(new BorderLayout());
 
-        JLabel lblTitulo =
-                new JLabel("Pizzas");
+		JLabel lblTitulo = new JLabel("Pizzas");
 
-        lblTitulo.setFont(
-                new Font("Tahoma", Font.BOLD, 18)
-        );
+		lblTitulo.setFont(new Font("Tahoma", Font.BOLD, 18));
 
-        panelSuperior.add(
-                lblTitulo,
-                BorderLayout.WEST
-        );
+		panelSuperior.add(lblTitulo, BorderLayout.WEST);
 
-        lblErro = new JLabel(" ");
+		lblErro = new JLabel(" ");
 
-        lblErro.setForeground(Color.RED);
+		lblErro.setForeground(Color.RED);
 
-        panelSuperior.add(
-                lblErro,
-                BorderLayout.CENTER
-        );
+		panelSuperior.add(lblErro, BorderLayout.CENTER);
 
-        add(
-                panelSuperior,
-                BorderLayout.NORTH
-        );
+		add(panelSuperior, BorderLayout.NORTH);
 
-        panelFeed = new JPanel();
+		panelFeed = new JPanel();
 
-        panelFeed.setLayout(
-                new BoxLayout(
-                        panelFeed,
-                        BoxLayout.Y_AXIS
-                )
-        );
+		panelFeed.setLayout(new BoxLayout(panelFeed, BoxLayout.Y_AXIS));
 
-        panelFeed.setBorder(
-                BorderFactory.createEmptyBorder(
-                        5,
-                        5,
-                        5,
-                        5
-                )
-        );
+		panelFeed.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-        JScrollPane scrollPane =
-                new JScrollPane(panelFeed);
+		JScrollPane scrollPane = new JScrollPane(panelFeed);
 
-        scrollPane.setBorder(null);
+		scrollPane.setBorder(null);
 
-        add(
-                scrollPane,
-                BorderLayout.CENTER
-        );
+		add(scrollPane, BorderLayout.CENTER);
 
-        JPanel panelBotoes =
-                new JPanel(
-                        new FlowLayout(
-                                FlowLayout.CENTER
-                        )
-                );
+		JPanel panelBotoes = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
-        JButton btnAdicionar =
-                new JButton("Adicionar Pizza");
+		JButton btnAdicionar = new JButton("Adicionar Pizza");
 
-        btnAdicionar.addActionListener(
-                e -> abrirFormularioAdicionar()
-        );
+		btnAdicionar.addActionListener(e -> abrirFormularioAdicionar());
 
-        panelBotoes.add(btnAdicionar);
+		panelBotoes.add(btnAdicionar);
 
-        JButton btnEditar =
-                new JButton("Editar");
+		JButton btnEditar = new JButton("Editar");
 
-        btnEditar.addActionListener(
-                e -> abrirFormularioEditar()
-        );
+		btnEditar.addActionListener(e -> abrirFormularioEditar());
 
-        panelBotoes.add(btnEditar);
+		panelBotoes.add(btnEditar);
 
-        JButton btnExcluir =
-                new JButton("Excluir");
+		JButton btnExcluir = new JButton("Excluir");
 
-        btnExcluir.addActionListener(
-                e -> excluirPizza()
-        );
-
-        panelBotoes.add(btnExcluir);
-
-        add(
-                panelBotoes,
-                BorderLayout.SOUTH
-        );
-
-        atualizarFeed();
-    }
-
-    public void atualizarFeed() {
-
-        panelFeed.removeAll();
-
-        paineisPizza.clear();
-
-        List<Pizza> pizzas =
-                PizzaController.getPizzas();
-
-        for (Pizza pizza : pizzas) {
-
-            JPanel painelPizza =
-                    criarPainelPizza(pizza);
-
-            paineisPizza.put(
-                    pizza,
-                    painelPizza
-            );
-
-            panelFeed.add(painelPizza);
-
-            panelFeed.add(
-                    new Box.Filler(
-                            new Dimension(0, 10),
-                            new Dimension(0, 10),
-                            new Dimension(0, 10)
-                    )
-            );
-        }
-
-        panelFeed.revalidate();
-        panelFeed.repaint();
-    }
-
-    private JPanel criarPainelPizza(Pizza pizza) {
-
-        JPanel painel =
-                new JPanel(
-                        new BorderLayout(
-                                15,
-                                5
-                        )
-                );
-
-        painel.setMaximumSize(
-                new Dimension(
-                        Integer.MAX_VALUE,
-                        150
-                )
-        );
-
-        painel.setPreferredSize(
-                new Dimension(
-                        600,
-                        140
-                )
-        );
-
-        painel.setBorder(
-                BorderFactory.createCompoundBorder(
-                        BorderFactory.createLineBorder(
-                                Color.LIGHT_GRAY
-                        ),
-                        BorderFactory.createEmptyBorder(
-                                10,
-                                10,
-                                10,
-                                10
-                        )
-                )
-        );
-
-        JLabel imagem = new JLabel();
-
-        ImageIcon icon =
-                carregarImagem(pizza);
-
-        if (icon != null) {
-
-            Image image =
-                    icon.getImage()
-                            .getScaledInstance(
-                                    120,
-                                    120,
-                                    Image.SCALE_SMOOTH
-                            );
-
-            imagem.setIcon(
-                    new ImageIcon(image)
-            );
-        }
-
-        painel.add(
-                imagem,
-                BorderLayout.WEST
-        );
-
-        JPanel informacoes =
-                new JPanel();
-
-        informacoes.setLayout(
-                new BoxLayout(
-                        informacoes,
-                        BoxLayout.Y_AXIS
-                )
-        );
-
-        JLabel lblNome =
-                new JLabel(
-                        pizza.getNome()
-                );
-
-        lblNome.setFont(
-                new Font(
-                        "Tahoma",
-                        Font.BOLD,
-                        18
-                )
-        );
-
-        informacoes.add(lblNome);
-
-        JLabel lblDescricao =
-                new JLabel(
-                        "<html>Descrição: "
-                        + pizza.getDescricao()
-                        + "</html>"
-                );
-
-        lblDescricao.setFont(
-                new Font(
-                        "Tahoma",
-                        Font.PLAIN,
-                        14
-                )
-        );
-
-        informacoes.add(lblDescricao);
-
-        JLabel lblPreco =
-                new JLabel(
-                        String.format(
-                                "R$ %.2f",
-                                pizza.getPreco()
-                        )
-                );
-
-        lblPreco.setFont(
-                new Font(
-                        "Tahoma",
-                        Font.BOLD,
-                        15
-                )
-        );
-
-        informacoes.add(lblPreco);
-
-        painel.add(
-                informacoes,
-                BorderLayout.CENTER
-        );
-
-        adicionarListenerSelecao(
-                painel,
-                pizza
-        );
-
-        return painel;
-    }
-
-    private ImageIcon carregarImagem(Pizza pizza) {
-
-        if (pizza == null) {
-            return null;
-        }
-
-        if (pizza.getImagem() == null ||
-                pizza.getImagem().length == 0) {
-
-            return null;
-        }
-
-        return new ImageIcon(
-                pizza.getImagem()
-        );
-    }
-
-    private void adicionarListenerSelecao(
-            java.awt.Component componente,
-            Pizza pizza) {
-
-        componente.addMouseListener(
-                new MouseAdapter() {
-
-                    @Override
-                    public void mouseClicked(
-                            MouseEvent e) {
-
-                        selecionarPizza(pizza);
-                    }
-                }
-        );
-
-        if (componente instanceof JPanel) {
-
-            JPanel panel =
-                    (JPanel) componente;
-
-            for (
-                    java.awt.Component filho
-                    : panel.getComponents()) {
-
-                adicionarListenerSelecao(
-                        filho,
-                        pizza
-                );
-            }
-        }
-    }
-
-    private void selecionarPizza(Pizza pizza) {
-
-        if (pizzaSelecionada != null) {
-
-            JPanel anterior =
-                    paineisPizza.get(
-                            pizzaSelecionada
-                    );
-
-            if (anterior != null) {
-
-                anterior.setBorder(
-                        BorderFactory.createCompoundBorder(
-                                BorderFactory.createLineBorder(
-                                        Color.LIGHT_GRAY
-                                ),
-                                BorderFactory.createEmptyBorder(
-                                        10,
-                                        10,
-                                        10,
-                                        10
-                                )
-                        )
-                );
-            }
-        }
-
-        pizzaSelecionada = pizza;
-
-        JPanel atual =
-                paineisPizza.get(pizza);
-
-        if (atual != null) {
-
-            atual.setBorder(
-                    BorderFactory.createCompoundBorder(
-                            BorderFactory.createLineBorder(
-                                    Color.BLUE,
-                                    2
-                            ),
-                            BorderFactory.createEmptyBorder(
-                                    9,
-                                    9,
-                                    9,
-                                    9
-                            )
-                    )
-            );
-        }
-    }
-
-    private void abrirFormularioAdicionar() {
-
-        JTextField txtNome =
-                new JTextField();
-
-        JTextField txtPreco =
-                new JTextField();
-
-        JTextField txtDescricao =
-                new JTextField();
-
-        JLabel lblImagem =
-                new JLabel(
-                        "Nenhuma imagem selecionada"
-                );
-
-        JButton btnImagem =
-                new JButton(
-                        "Escolher imagem"
-                );
-
-        final File[] arquivoSelecionado =
-                new File[1];
-
-        btnImagem.addActionListener(e -> {
-
-            JFileChooser fileChooser =
-                    new JFileChooser();
-
-            fileChooser.setDialogTitle(
-                    "Selecionar imagem"
-            );
-
-            fileChooser.setFileFilter(
-                    new FileNameExtensionFilter(
-                            "Imagens",
-                            "jpg",
-                            "jpeg",
-                            "png",
-                            "gif",
-                            "bmp"
-                    )
-            );
-
-            int resultado =
-                    fileChooser.showOpenDialog(
-                            this
-                    );
-
-            if (
-                    resultado ==
-                    JFileChooser.APPROVE_OPTION
-            ) {
-
-                arquivoSelecionado[0] =
-                        fileChooser.getSelectedFile();
-
-                lblImagem.setText(
-                        arquivoSelecionado[0].getName()
-                );
-            }
-        });
-
-        JPanel painel =
-                new JPanel(
-                        new GridLayout(
-                                5,
-                                2,
-                                5,
-                                5
-                        )
-                );
-
-        painel.add(
-                new JLabel("Nome:")
-        );
-
-        painel.add(txtNome);
-
-        painel.add(
-                new JLabel("Preço:")
-        );
-
-        painel.add(txtPreco);
-
-        painel.add(
-                new JLabel("Descrição:")
-        );
-
-        painel.add(txtDescricao);
-
-        painel.add(
-                new JLabel("Imagem:")
-        );
-
-        painel.add(btnImagem);
-
-        painel.add(
-                new JLabel("")
-        );
-
-        painel.add(lblImagem);
-
-        int resposta =
-                JOptionPane.showConfirmDialog(
-                        this,
-                        painel,
-                        "Adicionar Pizza",
-                        JOptionPane.OK_CANCEL_OPTION,
-                        JOptionPane.PLAIN_MESSAGE
-                );
-
-        if (
-                resposta !=
-                JOptionPane.OK_OPTION
-        ) {
-            return;
-        }
-
-        String erro =
-                PizzaController.adicionarPizza(
-                        txtNome.getText(),
-                        txtPreco.getText(),
-                        txtDescricao.getText(),
-                        arquivoSelecionado[0]
-                );
-
-        if (erro != null) {
-
-            mostrarErro(erro);
-
-            return;
-        }
-
-        limparErro();
-
-        atualizarFeed();
-
-        JOptionPane.showMessageDialog(
-                this,
-                "Pizza adicionada com sucesso!",
-                "Pizza",
-                JOptionPane.INFORMATION_MESSAGE
-        );
-    }
-
-    private void abrirFormularioEditar() {
-
-        if (pizzaSelecionada == null) {
-
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Selecione uma pizza para editar.",
-                    "Aviso",
-                    JOptionPane.WARNING_MESSAGE
-            );
-
-            return;
-        }
-
-        JTextField txtNome =
-                new JTextField(
-                        pizzaSelecionada.getNome()
-                );
-
-        JTextField txtPreco =
-                new JTextField(
-                        String.valueOf(
-                                pizzaSelecionada.getPreco()
-                        )
-                );
-
-        JTextField txtDescricao =
-                new JTextField(
-                        pizzaSelecionada.getDescricao()
-                );
-
-        JLabel lblImagem =
-                new JLabel(
-                        "Manter imagem atual"
-                );
-
-        JButton btnImagem =
-                new JButton(
-                        "Escolher nova imagem"
-                );
-
-        final File[] arquivoSelecionado =
-                new File[1];
-
-        btnImagem.addActionListener(e -> {
-
-            JFileChooser fileChooser =
-                    new JFileChooser();
-
-            fileChooser.setDialogTitle(
-                    "Selecionar nova imagem"
-            );
-
-            fileChooser.setFileFilter(
-                    new FileNameExtensionFilter(
-                            "Imagens",
-                            "jpg",
-                            "jpeg",
-                            "png",
-                            "gif",
-                            "bmp"
-                    )
-            );
-
-            int resultado =
-                    fileChooser.showOpenDialog(
-                            this
-                    );
-
-            if (
-                    resultado ==
-                    JFileChooser.APPROVE_OPTION
-            ) {
-
-                arquivoSelecionado[0] =
-                        fileChooser.getSelectedFile();
-
-                lblImagem.setText(
-                        arquivoSelecionado[0].getName()
-                );
-            }
-        });
-
-        JPanel painel =
-                new JPanel(
-                        new GridLayout(
-                                5,
-                                2,
-                                5,
-                                5
-                        )
-                );
-
-        painel.add(
-                new JLabel("Nome:")
-        );
-
-        painel.add(txtNome);
-
-        painel.add(
-                new JLabel("Preço:")
-        );
-
-        painel.add(txtPreco);
-
-        painel.add(
-                new JLabel("Descrição:")
-        );
-
-        painel.add(txtDescricao);
-
-        painel.add(
-                new JLabel("Imagem:")
-        );
-
-        painel.add(btnImagem);
-
-        painel.add(
-                new JLabel("")
-        );
-
-        painel.add(lblImagem);
-
-        int resposta =
-                JOptionPane.showConfirmDialog(
-                        this,
-                        painel,
-                        "Editar Pizza",
-                        JOptionPane.OK_CANCEL_OPTION,
-                        JOptionPane.PLAIN_MESSAGE
-                );
-
-        if (
-                resposta !=
-                JOptionPane.OK_OPTION
-        ) {
-            return;
-        }
-
-        String erro =
-                PizzaController.editarPizza(
-                        pizzaSelecionada,
-                        txtNome.getText(),
-                        txtPreco.getText(),
-                        txtDescricao.getText(),
-                        arquivoSelecionado[0]
-                );
-
-        if (erro != null) {
-
-            mostrarErro(erro);
-
-            return;
-        }
-
-        limparErro();
-
-        atualizarFeed();
-
-        JOptionPane.showMessageDialog(
-                this,
-                "Pizza alterada com sucesso!",
-                "Pizza",
-                JOptionPane.INFORMATION_MESSAGE
-        );
-    }
-
-    private void excluirPizza() {
-
-        if (pizzaSelecionada == null) {
-
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Selecione uma pizza para excluir.",
-                    "Aviso",
-                    JOptionPane.WARNING_MESSAGE
-            );
-
-            return;
-        }
-
-        int resposta =
-                JOptionPane.showConfirmDialog(
-                        this,
-                        "Tem certeza que deseja excluir a pizza "
-                        + pizzaSelecionada.getNome()
-                        + "?",
-                        "Excluir pizza",
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.WARNING_MESSAGE
-                );
-
-        if (
-                resposta !=
-                JOptionPane.YES_OPTION
-        ) {
-            return;
-        }
-
-        String erro =
-                PizzaController.excluirPizza(
-                        pizzaSelecionada
-                );
-
-        if (erro != null) {
-
-            mostrarErro(erro);
-
-            return;
-        }
-
-        pizzaSelecionada = null;
-
-        limparErro();
-
-        atualizarFeed();
-
-        JOptionPane.showMessageDialog(
-                this,
-                "Pizza excluída com sucesso!",
-                "Pizza",
-                JOptionPane.INFORMATION_MESSAGE
-        );
-    }
-
-    public Pizza getPizzaSelecionada() {
-        return pizzaSelecionada;
-    }
-
-    public void setPizzaSelecionada(Pizza pizza) {
-        this.pizzaSelecionada = pizza;
-    }
-
-    public void mostrarErro(String mensagem) {
-        lblErro.setText(mensagem);
-    }
-
-    public void limparErro() {
-        lblErro.setText(" ");
-    }
+		btnExcluir.addActionListener(e -> excluirPizza());
+
+		panelBotoes.add(btnExcluir);
+
+		add(panelBotoes, BorderLayout.SOUTH);
+
+		atualizarFeed();
+	}
+
+	public void atualizarFeed() {
+
+		panelFeed.removeAll();
+
+		paineisPizza.clear();
+
+		List<Pizza> pizzas = PizzaController.getPizzas();
+
+		for (Pizza pizza : pizzas) {
+
+			JPanel painelPizza = criarPainelPizza(pizza);
+
+			paineisPizza.put(pizza, painelPizza);
+
+			panelFeed.add(painelPizza);
+
+			panelFeed.add(new Box.Filler(new Dimension(0, 10), new Dimension(0, 10), new Dimension(0, 10)));
+		}
+
+		panelFeed.revalidate();
+		panelFeed.repaint();
+	}
+
+	private JPanel criarPainelPizza(Pizza pizza) {
+
+		JPanel painel = new JPanel(new BorderLayout(15, 5));
+
+		painel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150));
+
+		painel.setPreferredSize(new Dimension(600, 140));
+
+		painel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY),
+				BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+
+		JLabel imagem = new JLabel();
+
+		ImageIcon icon = carregarImagem(pizza);
+
+		if (icon != null) {
+
+			Image image = icon.getImage().getScaledInstance(120, 120, Image.SCALE_SMOOTH);
+
+			imagem.setIcon(new ImageIcon(image));
+		}
+
+		painel.add(imagem, BorderLayout.WEST);
+
+		JPanel informacoes = new JPanel();
+
+		informacoes.setLayout(new BoxLayout(informacoes, BoxLayout.Y_AXIS));
+
+		JLabel lblNome = new JLabel(pizza.getNome());
+
+		lblNome.setFont(new Font("Tahoma", Font.BOLD, 18));
+
+		informacoes.add(lblNome);
+
+		JLabel lblDescricao = new JLabel("<html>Descrição: " + pizza.getDescricao() + "</html>");
+
+		lblDescricao.setFont(new Font("Tahoma", Font.PLAIN, 14));
+
+		informacoes.add(lblDescricao);
+
+		JLabel lblPreco = new JLabel(String.format("R$ %.2f", pizza.getPreco()));
+
+		lblPreco.setFont(new Font("Tahoma", Font.BOLD, 15));
+
+		informacoes.add(lblPreco);
+
+		painel.add(informacoes, BorderLayout.CENTER);
+
+		adicionarListenerSelecao(painel, pizza);
+
+		return painel;
+	}
+
+	private ImageIcon carregarImagem(Pizza pizza) {
+
+		if (pizza == null) {
+			return null;
+		}
+
+		if (pizza.getImagem() == null || pizza.getImagem().length == 0) {
+
+			return null;
+		}
+
+		return new ImageIcon(pizza.getImagem());
+	}
+
+	private void adicionarListenerSelecao(java.awt.Component componente, Pizza pizza) {
+
+		componente.addMouseListener(new MouseAdapter() {
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+
+				selecionarPizza(pizza);
+			}
+		});
+
+		if (componente instanceof JPanel) {
+
+			JPanel panel = (JPanel) componente;
+
+			for (java.awt.Component filho : panel.getComponents()) {
+
+				adicionarListenerSelecao(filho, pizza);
+			}
+		}
+	}
+
+	private void selecionarPizza(Pizza pizza) {
+
+		if (pizzaSelecionada != null) {
+
+			JPanel anterior = paineisPizza.get(pizzaSelecionada);
+
+			if (anterior != null) {
+
+				anterior.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY),
+						BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+			}
+		}
+
+		pizzaSelecionada = pizza;
+
+		JPanel atual = paineisPizza.get(pizza);
+
+		if (atual != null) {
+
+			atual.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLUE, 2),
+					BorderFactory.createEmptyBorder(9, 9, 9, 9)));
+		}
+	}
+
+	private void abrirFormularioAdicionar() {
+
+		JTextField txtNome = new JTextField();
+
+		JTextField txtPreco = new JTextField();
+
+		JTextField txtDescricao = new JTextField();
+
+		JLabel lblImagem = new JLabel("Nenhuma imagem selecionada");
+
+		JButton btnImagem = new JButton("Escolher imagem");
+
+		final File[] arquivoSelecionado = new File[1];
+
+		btnImagem.addActionListener(e -> {
+
+			JFileChooser fileChooser = new JFileChooser();
+
+			fileChooser.setDialogTitle("Selecionar imagem");
+
+			fileChooser.setFileFilter(new FileNameExtensionFilter("Imagens", "jpg", "jpeg", "png", "gif", "bmp"));
+
+			int resultado = fileChooser.showOpenDialog(this);
+
+			if (resultado == JFileChooser.APPROVE_OPTION) {
+
+				arquivoSelecionado[0] = fileChooser.getSelectedFile();
+
+				lblImagem.setText(arquivoSelecionado[0].getName());
+			}
+		});
+
+		JPanel painel = new JPanel(new GridLayout(5, 2, 5, 5));
+
+		painel.add(new JLabel("Nome:"));
+
+		painel.add(txtNome);
+
+		painel.add(new JLabel("Preço:"));
+
+		painel.add(txtPreco);
+
+		painel.add(new JLabel("Descrição:"));
+
+		painel.add(txtDescricao);
+
+		painel.add(new JLabel("Imagem:"));
+
+		painel.add(btnImagem);
+
+		painel.add(new JLabel(""));
+
+		painel.add(lblImagem);
+
+		int resposta = JOptionPane.showConfirmDialog(this, painel, "Adicionar Pizza", JOptionPane.OK_CANCEL_OPTION,
+				JOptionPane.PLAIN_MESSAGE);
+
+		if (resposta != JOptionPane.OK_OPTION) {
+			return;
+		}
+
+		String erro = PizzaController.adicionarPizza(txtNome.getText(), txtPreco.getText(), txtDescricao.getText(),
+				arquivoSelecionado[0]);
+
+		if (erro != null) {
+
+			mostrarErro(erro);
+
+			return;
+		}
+
+		limparErro();
+
+		atualizarFeed();
+
+		JOptionPane.showMessageDialog(this, "Pizza adicionada com sucesso!", "Pizza", JOptionPane.INFORMATION_MESSAGE);
+	}
+
+	private void abrirFormularioEditar() {
+
+		if (pizzaSelecionada == null) {
+
+			JOptionPane.showMessageDialog(this, "Selecione uma pizza para editar.", "Aviso",
+					JOptionPane.WARNING_MESSAGE);
+
+			return;
+		}
+
+		JTextField txtNome = new JTextField(pizzaSelecionada.getNome());
+
+		JTextField txtPreco = new JTextField(String.valueOf(pizzaSelecionada.getPreco()));
+
+		JTextField txtDescricao = new JTextField(pizzaSelecionada.getDescricao());
+
+		JLabel lblImagem = new JLabel("Manter imagem atual");
+
+		JButton btnImagem = new JButton("Escolher nova imagem");
+
+		final File[] arquivoSelecionado = new File[1];
+
+		btnImagem.addActionListener(e -> {
+
+			JFileChooser fileChooser = new JFileChooser();
+
+			fileChooser.setDialogTitle("Selecionar nova imagem");
+
+			fileChooser.setFileFilter(new FileNameExtensionFilter("Imagens", "jpg", "jpeg", "png", "gif", "bmp"));
+
+			int resultado = fileChooser.showOpenDialog(this);
+
+			if (resultado == JFileChooser.APPROVE_OPTION) {
+
+				arquivoSelecionado[0] = fileChooser.getSelectedFile();
+
+				lblImagem.setText(arquivoSelecionado[0].getName());
+			}
+		});
+
+		JPanel painel = new JPanel(new GridLayout(5, 2, 5, 5));
+
+		painel.add(new JLabel("Nome:"));
+
+		painel.add(txtNome);
+
+		painel.add(new JLabel("Preço:"));
+
+		painel.add(txtPreco);
+
+		painel.add(new JLabel("Descrição:"));
+
+		painel.add(txtDescricao);
+
+		painel.add(new JLabel("Imagem:"));
+
+		painel.add(btnImagem);
+
+		painel.add(new JLabel(""));
+
+		painel.add(lblImagem);
+
+		int resposta = JOptionPane.showConfirmDialog(this, painel, "Editar Pizza", JOptionPane.OK_CANCEL_OPTION,
+				JOptionPane.PLAIN_MESSAGE);
+
+		if (resposta != JOptionPane.OK_OPTION) {
+			return;
+		}
+
+		String erro = PizzaController.editarPizza(pizzaSelecionada, txtNome.getText(), txtPreco.getText(),
+				txtDescricao.getText(), arquivoSelecionado[0]);
+
+		if (erro != null) {
+
+			mostrarErro(erro);
+
+			return;
+		}
+
+		limparErro();
+
+		atualizarFeed();
+
+		JOptionPane.showMessageDialog(this, "Pizza alterada com sucesso!", "Pizza", JOptionPane.INFORMATION_MESSAGE);
+	}
+
+	private void excluirPizza() {
+
+		if (pizzaSelecionada == null) {
+
+			JOptionPane.showMessageDialog(this, "Selecione uma pizza para excluir.", "Aviso",
+					JOptionPane.WARNING_MESSAGE);
+
+			return;
+		}
+
+		int resposta = JOptionPane.showConfirmDialog(this,
+				"Tem certeza que deseja excluir a pizza " + pizzaSelecionada.getNome() + "?", "Excluir pizza",
+				JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+
+		if (resposta != JOptionPane.YES_OPTION) {
+			return;
+		}
+
+		String erro = PizzaController.excluirPizza(pizzaSelecionada);
+
+		if (erro != null) {
+
+			mostrarErro(erro);
+
+			return;
+		}
+
+		pizzaSelecionada = null;
+
+		limparErro();
+
+		atualizarFeed();
+
+		JOptionPane.showMessageDialog(this, "Pizza excluída com sucesso!", "Pizza", JOptionPane.INFORMATION_MESSAGE);
+	}
+
+	public Pizza getPizzaSelecionada() {
+		return pizzaSelecionada;
+	}
+
+	public void setPizzaSelecionada(Pizza pizza) {
+		this.pizzaSelecionada = pizza;
+	}
+
+	public void mostrarErro(String mensagem) {
+		lblErro.setText(mensagem);
+	}
+
+	public void limparErro() {
+		lblErro.setText(" ");
+	}
 }

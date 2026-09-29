@@ -125,6 +125,12 @@ public class TelaLogin extends JFrame {
 		contentPane.add(lblCredenciais, gbc_lblCredenciais);
 
 		lblEsqueciSenha = new JLabel("Esqueci a senha");
+		lblEsqueciSenha.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				LoginController.IniciarTelaSenha();
+			}
+		});
 		lblEsqueciSenha.setForeground(SystemColor.textHighlight);
 
 		GridBagConstraints gbc_lblEsqueciSenha = new GridBagConstraints();
