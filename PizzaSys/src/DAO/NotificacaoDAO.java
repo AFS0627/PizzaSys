@@ -109,7 +109,7 @@ public class NotificacaoDAO {
 	}
 
 	public static void excluirTodas(int funcionarioId) throws SQLException {
-		String sql = "DELETE FROM notificacoes WHERE funcionario_id = ?";
+		String sql = "DELETE FROM notificacao WHERE funcionario_id = ?";
 		try (Connection connection = Conexao.conectar();
 				PreparedStatement statement = connection.prepareStatement(sql)) {
 			statement.setInt(1, funcionarioId);
